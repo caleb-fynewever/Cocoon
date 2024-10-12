@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.subsystems.vision.VisionUpdate;
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
@@ -87,17 +88,11 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
     public DrivetrainSubsystem(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
         configurePathPlanner();
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
     }
 
     public DrivetrainSubsystem(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
         configurePathPlanner();
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
     }
 
     private void configurePathPlanner() {
@@ -124,10 +119,6 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
-    public Command getAutoPath(String pathName) {
-        return new PathPlannerAuto(pathName);
-    }
-
     /*
      * Both the sysid commands are specific to one particular sysid routine, change
      * which one you're trying to characterize
@@ -144,19 +135,16 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
         return m_kinematics.toChassisSpeeds(getState().ModuleStates);
     }
 
-    private void startSimThread() {
-        m_lastSimTime = Utils.getCurrentTimeSeconds();
-
-        /* Run simulation at a faster rate so PID gains behave more reasonably */
-        m_simNotifier = new Notifier(() -> {
-            final double currentTime = Utils.getCurrentTimeSeconds();
-            double deltaTime = currentTime - m_lastSimTime;
-            m_lastSimTime = currentTime;
-
-            /* use the measured time delta, get battery voltage from WPILib */
-            updateSimState(deltaTime, RobotController.getBatteryVoltage());
-        });
-        m_simNotifier.startPeriodic(kSimLoopPeriod);
+    public void addVisionMeasurement(VisionUpdate visionUpdate) {
+        if (visionUpdate.getVisionMeasurementStdDevs() == null) {
+            this.addVisionMeasurement(
+                    visionUpdate.estimatedPose.toPose2d(), visionUpdate.timestampSeconds);
+        } else {
+            this.addVisionMeasurement(
+                    visionUpdate.estimatedPose.toPose2d(),
+                    visionUpdate.timestampSeconds,
+                    visionUpdate.getVisionMeasurementStdDevs());
+        }
     }
 
     @Override

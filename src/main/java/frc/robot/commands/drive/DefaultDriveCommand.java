@@ -9,15 +9,12 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.ApplyChassisSpeeds;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotState;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.Constants.DrivetrainConstants;
 
 public class DefaultDriveCommand extends Command {
 
@@ -40,8 +37,8 @@ public class DefaultDriveCommand extends Command {
   private final RobotState robotState;
 
   /**
-   * @param xSupplier supplier for forward velocity.
-   * @param ySupplier supplier for sideways velocity.
+   * @param xSupplier        supplier for forward velocity.
+   * @param ySupplier        supplier for sideways velocity.
    * @param rotationSupplier supplier for angular velocity.
    */
   public DefaultDriveCommand(
@@ -49,18 +46,18 @@ public class DefaultDriveCommand extends Command {
       DoubleSupplier ySupplier,
       DoubleSupplier rotationSupplier,
       BooleanSupplier fieldCentricSupplier,
-      DrivetrainSubsystem drivetrain) {
-    this.drivetrain = drivetrain;
+      DrivetrainSubsystem drivetrain,
+      RobotState robotState) {
     this.xSupplier = xSupplier;
     this.ySupplier = ySupplier;
     this.rotationSupplier = rotationSupplier;
     this.fieldCentricSupplier = fieldCentricSupplier;
+    this.drivetrain = drivetrain;
+    this.robotState = robotState;
 
     xLimiter = new SlewRateLimiter(2);
     yLimiter = new SlewRateLimiter(2);
     rotationLimiter = new SlewRateLimiter(5);
-
-    robotState = RobotState.getInstance();
 
     addRequirements(drivetrain);
   }
@@ -83,14 +80,15 @@ public class DefaultDriveCommand extends Command {
 
   @Override
   public void execute() {
-    drivetrain.applyRequest(() -> drive.withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-        .withVelocityY(-getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
+    drivetrain.applyRequest(() -> drive
+        .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
+        .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
         .withRotationalRate(getRotation() * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond()));
   }
 
   @Override
   public void end(boolean interrupted) {
-    // TODO: add smth here
+    drivetrain.setControl(new ApplyChassisSpeeds());
   }
 
   protected double slewAxis(SlewRateLimiter limiter, double value) {
