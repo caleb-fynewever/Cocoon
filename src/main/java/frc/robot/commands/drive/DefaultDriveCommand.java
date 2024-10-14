@@ -7,14 +7,12 @@ package frc.robot.commands.drive;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.ApplyChassisSpeeds;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotState;
-import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.drive.DrivetrainSubsystem;
 
 public class DefaultDriveCommand extends Command {
 
@@ -28,11 +26,6 @@ public class DefaultDriveCommand extends Command {
   private final SlewRateLimiter xLimiter;
   private final SlewRateLimiter yLimiter;
   private final SlewRateLimiter rotationLimiter;
-
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.1)
-      .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.1) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   private final RobotState robotState;
 
@@ -80,10 +73,7 @@ public class DefaultDriveCommand extends Command {
 
   @Override
   public void execute() {
-    drivetrain.applyRequest(() -> drive
-        .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-        .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-        .withRotationalRate(getRotation() * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond()));
+    drivetrain.drive(getX(), getY(), getRotation(), getFieldCentric());
   }
 
   @Override

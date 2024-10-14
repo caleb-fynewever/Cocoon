@@ -9,12 +9,9 @@ import java.util.function.Consumer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.Constants.DrivetrainConstants.BackLeftModule;
-import frc.robot.Constants.DrivetrainConstants.BackRightModule;
-import frc.robot.Constants.DrivetrainConstants.FrontLeftModule;
-import frc.robot.Constants.DrivetrainConstants.FrontRightModule;
 import frc.robot.commands.drive.DefaultDriveCommand;
-import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.drive.DrivetrainSubsystem;
+import frc.robot.subsystems.drive.ctre.generated.TunerConstants;
 import frc.robot.subsystems.vision.VisionUpdate;
 import frc.robot.util.Telemetry;
 
@@ -31,7 +28,7 @@ public class RobotContainer {
       drivetrain.addVisionMeasurement(estimate);
     }
   };
-  
+
   private final RobotState robotState = new RobotState(visionEstimateConsumer);
 
   private final Telemetry logger = new Telemetry(DrivetrainSubsystem.getMaxVelocityMetersPerSecond());
@@ -40,13 +37,11 @@ public class RobotContainer {
     driveJoystick = new Joystick(0);
     turnJoystick = new Joystick(1);
     controlPanel = new Joystick(2);
-    
+
     drivetrain = new DrivetrainSubsystem(
-        DrivetrainConstants.DrivetrainConstants,
-        FrontLeftModule.getConstants(),
-        FrontRightModule.getConstants(),
-        BackLeftModule.getConstants(),
-        BackRightModule.getConstants());
+        robotState,
+        DrivetrainConstants.TUNER_DRIVETRAIN_CONSTANTS,
+        DrivetrainConstants.TUNER_MODULE_CONSTANTS);
 
     drivetrain.setDefaultCommand(
         new DefaultDriveCommand(
