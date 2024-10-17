@@ -11,7 +11,7 @@ import frc.robot.subsystems.vision.VisionUpdate;
 
 public class RobotState {
 
-    public final static double LOOKBACK_TIME = 1.0;
+    private final static double LOOKBACK_TIME = 1.0;
     private Pose2d fieldToRobot = MathHelpers.kPose2dZero;
     private final TimeInterpolatableBuffer<Pose2d> odometryMeasurements = TimeInterpolatableBuffer.createBuffer(LOOKBACK_TIME);
     

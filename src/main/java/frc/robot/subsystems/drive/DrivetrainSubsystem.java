@@ -1,31 +1,21 @@
 package frc.robot.subsystems.drive;
 
-import static edu.wpi.first.units.Units.Volts;
-
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.ctre.generated.TunerConstants;
 import frc.robot.subsystems.vision.VisionUpdate;
@@ -38,16 +28,11 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean hasAppliedOperatorPerspective = false;
 
-    private final SwerveDrivetrainConstants drivetrainConstants;
-    private final SwerveModuleConstants[] swerveModuleConstants;
-
     private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
     public DrivetrainSubsystem(RobotState robotState, SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants... modules) {
         super(drivetrainConstants, modules);
-        this.drivetrainConstants = drivetrainConstants;
-        this.swerveModuleConstants = modules;
         configurePathPlanner();
     }
 
@@ -63,11 +48,7 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
                 this::seedFieldRelative, // Consumer for seeding pose against auto
                 this::getCurrentRobotChassisSpeeds,
                 (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
-                new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0),
-                        new PIDConstants(10, 0, 0),
-                        TunerConstants.kSpeedAt12VoltsMps,
-                        driveBaseRadius,
-                        new ReplanningConfig()),
+                PathPlannerConstants.HOLONOMIC_PATH_FOLLOWER_CONFIG,
                 () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, // Assume the path needs to be flipped for Red vs Blue, this is normally the case
                 this); // Subsystem for requirements
     }
@@ -90,24 +71,24 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
                 Math.min(Math.abs(normalizedRotationVelocity), 1.0),
                 normalizedRotationVelocity);
 
-        if(fieldCentric) {
+        if (fieldCentric) {
             SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-                .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.1)
-                .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.1) // Add a 10% deadband
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-                .withVelocityX(normalizedXVelocity)
-                .withVelocityY(normalizedYVelocity)
-                .withRotationalRate(normalizedRotationVelocity);
-                setControl(drive);
+                    .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.1)
+                    .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.1) // Add a 10% deadband
+                    .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+                    .withVelocityX(normalizedXVelocity)
+                    .withVelocityY(normalizedYVelocity)
+                    .withRotationalRate(normalizedRotationVelocity);
+            setControl(drive);
         } else {
             SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
-                .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.1)
-                .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.1) // Add a 10% deadband
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-                .withVelocityX(normalizedXVelocity)
-                .withVelocityY(normalizedYVelocity)
-                .withRotationalRate(normalizedRotationVelocity);
-                setControl(drive);
+                    .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.1)
+                    .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.1) // Add a 10% deadband
+                    .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+                    .withVelocityX(normalizedXVelocity)
+                    .withVelocityY(normalizedYVelocity)
+                    .withRotationalRate(normalizedRotationVelocity);
+            setControl(drive);
         }
     }
 

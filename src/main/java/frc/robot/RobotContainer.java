@@ -9,11 +9,14 @@ import java.util.function.Consumer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.auto.common.AutoFactory;
+import frc.robot.auto.common.AutoRequirements;
 import frc.robot.commands.drive.DefaultDriveCommand;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
-import frc.robot.subsystems.drive.ctre.generated.TunerConstants;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.vision.VisionUpdate;
 import frc.robot.util.Telemetry;
+import frc.robot.util.io.Dashboard;
 
 public class RobotContainer {
   public final Joystick driveJoystick;
@@ -21,6 +24,9 @@ public class RobotContainer {
   public final Joystick controlPanel;
 
   public final DrivetrainSubsystem drivetrain;
+  public final VisionSubsystem vision;
+
+  public final AutoFactory autoFactory;
 
   private final Consumer<VisionUpdate> visionEstimateConsumer = new Consumer<VisionUpdate>() {
     @Override
@@ -43,6 +49,8 @@ public class RobotContainer {
         DrivetrainConstants.TUNER_DRIVETRAIN_CONSTANTS,
         DrivetrainConstants.TUNER_MODULE_CONSTANTS);
 
+    vision = new VisionSubsystem(robotState);
+
     drivetrain.setDefaultCommand(
         new DefaultDriveCommand(
             driveJoystick::getY,
@@ -51,8 +59,15 @@ public class RobotContainer {
             // Rotation velocity supplier.
             turnJoystick::getX,
             () -> false,
+            drivetrain));
+
+    autoFactory = new AutoFactory(
+        () -> Dashboard.getInstance().getAuto(),
+        new AutoRequirements(
+            robotState,
             drivetrain,
-            robotState));
+            vision));
+
     configureBindings();
   }
 

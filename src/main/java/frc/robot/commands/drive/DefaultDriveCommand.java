@@ -11,7 +11,6 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.ApplyChassisSpeeds;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotState;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
 
 public class DefaultDriveCommand extends Command {
@@ -27,8 +26,6 @@ public class DefaultDriveCommand extends Command {
   private final SlewRateLimiter yLimiter;
   private final SlewRateLimiter rotationLimiter;
 
-  private final RobotState robotState;
-
   /**
    * @param xSupplier        supplier for forward velocity.
    * @param ySupplier        supplier for sideways velocity.
@@ -39,14 +36,12 @@ public class DefaultDriveCommand extends Command {
       DoubleSupplier ySupplier,
       DoubleSupplier rotationSupplier,
       BooleanSupplier fieldCentricSupplier,
-      DrivetrainSubsystem drivetrain,
-      RobotState robotState) {
+      DrivetrainSubsystem drivetrain) {
     this.xSupplier = xSupplier;
     this.ySupplier = ySupplier;
     this.rotationSupplier = rotationSupplier;
     this.fieldCentricSupplier = fieldCentricSupplier;
     this.drivetrain = drivetrain;
-    this.robotState = robotState;
 
     xLimiter = new SlewRateLimiter(2);
     yLimiter = new SlewRateLimiter(2);

@@ -4,6 +4,9 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -191,5 +194,37 @@ public class Constants {
     public static class FieldConstants {
         public static final double FIELD_LENGTH = Units.inchesToMeters(651.223);
         public static final double FIELD_WIDTH = Units.inchesToMeters(323.277);
+    }
+    public static final class DashboardConstants {
+        public static final String DRIVE_MODE_KEY = "Drive Mode";
+        public static final String AUTO_COMPILED_KEY = "Auto Compiled";
+        public static final String AUTO_DESCRIPTION_KEY = "Auto Description";
+    }
+
+    public static final class PathPlannerConstants {
+        public static final double TRANSLATION_KP = 0.7;
+        public static final double TRANSLATION_KI = 0;
+        public static final double TRANSLATION_KD = 0;
+
+        public static final double ROTATION_KP = .7;
+        public static final double ROTATION_KI = 0;
+        public static final double ROTATION_KD = 0;
+
+        public static final double DRIVE_BASE_RADIUS_METERS = Math.hypot(
+                DrivetrainConstants.DRIVETRAIN_TRACKWIDTH_METERS, DrivetrainConstants.DRIVETRAIN_WHEELBASE_METERS) / 2;
+
+        public static final HolonomicPathFollowerConfig HOLONOMIC_PATH_FOLLOWER_CONFIG = new HolonomicPathFollowerConfig(
+                new PIDConstants(
+                        TRANSLATION_KP,
+                        TRANSLATION_KI,
+                        TRANSLATION_KD), // Translation PID constants
+                new PIDConstants(
+                        ROTATION_KP,
+                        ROTATION_KI,
+                        ROTATION_KD), // Rotation PID constants
+                TunerConstants.kSpeedAt12VoltsMps, // Max module speed, in m/s
+                DRIVE_BASE_RADIUS_METERS, // Drive base radius in meters. Distance from robot center to furthest module.
+                new ReplanningConfig() // Default path replanning config. See the API for the options here
+        );
     }
 }
