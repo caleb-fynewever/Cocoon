@@ -22,9 +22,9 @@ public class Sauce123Auto extends AutoBase{
 
     @Override
     public void init(){
-        createFollowPathCommand(startPathCenterTo1);
-        createFollowPathCommand(path1To2);
-        createFollowPathCommand(path2To3);
+        addCommands(createFollowPathCommand(startPathCenterTo1),
+        createFollowPathCommand(path1To2),
+        createFollowPathCommand(path2To3));
     }
 
 }

@@ -2,39 +2,25 @@ package frc.robot.util.io;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.DashboardConstants;
 import frc.robot.auto.common.AutoFactory.Auto;
 
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 public class Dashboard {
-    private static Dashboard INSTANCE;
+    private final LoggedDashboardChooser<DriveMode> driveModeChooser = new LoggedDashboardChooser<>("Drive Mode");
 
-    private final SendableChooser<DriveMode> driveModeChooser;
-    
-    private final SendableChooser<Auto> autoChooser;
+    private final LoggedDashboardChooser<Auto> autoChooser = new LoggedDashboardChooser<>("Auto Routine");
 
-    public static Dashboard getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new Dashboard();
-        }
-
-        return INSTANCE;
-    }
-
-    private Dashboard() {
-        driveModeChooser = new SendableChooser<DriveMode>();
+    public Dashboard() {
+        driveModeChooser.addDefaultOption(DriveMode.FIELD_CENTRIC.name(), DriveMode.FIELD_CENTRIC);
         driveModeChooser.addOption(DriveMode.FIELD_CENTRIC.name(), DriveMode.FIELD_CENTRIC);
         driveModeChooser.addOption(DriveMode.ROBOT_CENTRIC.name(), DriveMode.ROBOT_CENTRIC);
-        driveModeChooser.setDefaultOption(DriveMode.FIELD_CENTRIC.name(), DriveMode.FIELD_CENTRIC);
-        SmartDashboard.putData(DashboardConstants.DRIVE_MODE_KEY, driveModeChooser);
 
-        autoChooser = new SendableChooser<Auto>();
+        autoChooser.addDefaultOption(Auto.NO_AUTO.name(), Auto.NO_AUTO);
         for (Auto auto : Auto.values()) {
             autoChooser.addOption(auto.name(), auto);
         }
-        autoChooser.setDefaultOption(Auto.NO_AUTO.name(), Auto.NO_AUTO);
-        SmartDashboard.putData("Auto", autoChooser);
     }
 
     public <V> void putData(String key, V value) {
@@ -54,11 +40,11 @@ public class Dashboard {
     }
 
     public boolean isFieldCentric() {
-        return driveModeChooser.getSelected() == DriveMode.FIELD_CENTRIC;      
+        return driveModeChooser.get() == DriveMode.FIELD_CENTRIC;      
     }
 
     public Auto getAuto() {
-        return autoChooser.getSelected();
+        return autoChooser.get();
     }
 
     // Enums for Dashboard elements:

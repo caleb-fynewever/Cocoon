@@ -23,6 +23,8 @@ public class RobotContainer {
   public final Joystick turnJoystick;
   public final Joystick controlPanel;
 
+  public final Dashboard dashboard;
+
   public final DrivetrainSubsystem drivetrain;
   public final VisionSubsystem vision;
 
@@ -43,6 +45,8 @@ public class RobotContainer {
     driveJoystick = new Joystick(0);
     turnJoystick = new Joystick(1);
     controlPanel = new Joystick(2);
+    
+    dashboard = new Dashboard();
 
     drivetrain = new DrivetrainSubsystem(
         robotState,
@@ -58,11 +62,11 @@ public class RobotContainer {
             driveJoystick::getX,
             // Rotation velocity supplier.
             turnJoystick::getX,
-            () -> false,
+            () -> dashboard.isFieldCentric(),
             drivetrain));
 
     autoFactory = new AutoFactory(
-        () -> Dashboard.getInstance().getAuto(),
+        () -> dashboard.getAuto(),
         new AutoRequirements(
             robotState,
             drivetrain,
@@ -90,6 +94,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return null;
+    return autoFactory.getCompiledAuto();
   }
 }

@@ -2,6 +2,7 @@ package frc.robot.subsystems.drive;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -12,15 +13,21 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.PathPlannerConstants;
+import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.ctre.generated.TunerConstants;
 import frc.robot.subsystems.vision.VisionUpdate;
 
 public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
+    private static final double kSimLoopPeriod = 0.005; // 5 ms
+    private Notifier simNotifier = null;
+    private double lastSimTime;
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -34,6 +41,10 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
             SwerveModuleConstants... modules) {
         super(drivetrainConstants, modules);
         configurePathPlanner();
+
+        if(Robot.isSimulation()) {
+            startSimThread();
+        }
     }
 
     private void configurePathPlanner() {
@@ -57,37 +68,37 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
     * All parameters are taken in normalized terms of [-1.0 to 1.0].
     */
     public void drive(
-            double normalizedXVelocity,
-            double normalizedYVelocity,
-            double normalizedRotationVelocity,
+            double inputX,
+            double inputY,
+            double inputRotation,
             boolean fieldCentric) {
-        normalizedXVelocity = Math.copySign(
-                Math.min(Math.abs(normalizedXVelocity), 1.0),
-                normalizedXVelocity);
-        normalizedYVelocity = Math.copySign(
-                Math.min(Math.abs(normalizedYVelocity), 1.0),
-                normalizedYVelocity);
-        normalizedRotationVelocity = Math.copySign(
-                Math.min(Math.abs(normalizedRotationVelocity), 1.0),
-                normalizedRotationVelocity);
+        inputX = Math.copySign(
+                Math.min(Math.abs(inputX), 1.0),
+                inputX);
+        inputY = Math.copySign(
+                Math.min(Math.abs(inputY), 1.0),
+                inputY);
+        inputRotation = Math.copySign(
+                Math.min(Math.abs(inputRotation), 1.0),
+                inputRotation);
 
         if (fieldCentric) {
             SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
                     .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.1)
                     .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.1) // Add a 10% deadband
                     .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-                    .withVelocityX(normalizedXVelocity)
-                    .withVelocityY(normalizedYVelocity)
-                    .withRotationalRate(normalizedRotationVelocity);
+                    .withVelocityX(inputX * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
+                    .withVelocityY(inputY * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
+                    .withRotationalRate(inputRotation * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond());
             setControl(drive);
         } else {
             SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
                     .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.1)
                     .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.1) // Add a 10% deadband
                     .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-                    .withVelocityX(normalizedXVelocity)
-                    .withVelocityY(normalizedYVelocity)
-                    .withRotationalRate(normalizedRotationVelocity);
+                    .withVelocityX(inputX * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
+                    .withVelocityY(inputY * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
+                    .withRotationalRate(inputRotation * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond());
             setControl(drive);
         }
     }
@@ -143,5 +154,21 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
         return getMaxVelocityMetersPerSecond() / Math.hypot(
                 DrivetrainConstants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
                 DrivetrainConstants.DRIVETRAIN_WHEELBASE_METERS / 2.0);
+    }
+
+    private void startSimThread() {
+        lastSimTime = Utils.getCurrentTimeSeconds();
+
+        /* Run simulation at a faster rate so PID gains behave more reasonably */
+        simNotifier = new Notifier(() -> {
+            final double currentTime = Utils.getCurrentTimeSeconds();
+            double deltaTime = currentTime - lastSimTime;
+            lastSimTime = currentTime;
+
+            /* use the measured time delta, get battery voltage from WPILib */
+            updateSimState(deltaTime, RobotController.getBatteryVoltage());
+        });
+
+        simNotifier.startPeriodic(kSimLoopPeriod);
     }
 }

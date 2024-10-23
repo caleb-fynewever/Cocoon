@@ -6,6 +6,9 @@ package frc.robot.auto.common;
 
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean;
+import org.littletonrobotics.junction.networktables.LoggedDashboardString;
+
 import frc.robot.Constants;
 import frc.robot.Constants.DashboardConstants;
 import frc.robot.auto.modes.AutoBase;
@@ -19,59 +22,62 @@ public class AutoFactory {
     private final Supplier<Auto> autoSupplier;
     private final AutoRequirements autoRequirements;
 
-    private Auto currentAuto;
+    private static LoggedDashboardBoolean autoCompiled = new LoggedDashboardBoolean(DashboardConstants.AUTO_COMPILED_KEY, false);
+    private static LoggedDashboardString loggedAutoDescription = new LoggedDashboardString(DashboardConstants.AUTO_DESCRIPTION_KEY, "No Description");
     
-    private AutoBase compiledAuto;
-
-    public AutoFactory(
-        Supplier<Auto> autoSupplier,
-        AutoRequirements autoRequirements
-    ) {
-        this.autoSupplier = autoSupplier;
-        this.autoRequirements = autoRequirements;
-    }
-
-    public boolean recompileNeeded() {
-        return autoSupplier.get() != currentAuto;
-    }
-
-    public void recompile() {
-        Dashboard.getInstance().putData(DashboardConstants.AUTO_COMPILED_KEY, false);
-        currentAuto = autoSupplier.get();
-        if (currentAuto == null) {
-            currentAuto = Auto.NO_AUTO;
+        private Auto currentAuto;
+        
+        private AutoBase compiledAuto;
+    
+        public AutoFactory(
+            Supplier<Auto> autoSupplier,
+            AutoRequirements autoRequirements
+        ) {
+            this.autoSupplier = autoSupplier;
+            this.autoRequirements = autoRequirements;
         }
-
-        compiledAuto = currentAuto.getInstance(autoRequirements);
-
-        if (compiledAuto != null) {
-            compiledAuto.init();
+    
+        public boolean recompileNeeded() {
+            return autoSupplier.get() != currentAuto;
         }
-
-        Dashboard.getInstance().putData(DashboardConstants.AUTO_COMPILED_KEY, true);
-    }
-
-    public AutoBase getCompiledAuto() {
-        return compiledAuto;
-    }
-
-    public static enum Auto {
-        NO_AUTO(null),
-        SAUCE_AUTO(Sauce123Auto.class);
-
-        private final Class<? extends AutoBase> autoClass;
-
-        private Auto(Class<? extends AutoBase> autoClass) {
-            this.autoClass = autoClass;
+    
+        public void recompile() {
+            autoCompiled.set(false);
+            currentAuto = autoSupplier.get();
+            if (currentAuto == null) {
+                currentAuto = Auto.NO_AUTO;
+            }
+    
+            compiledAuto = currentAuto.getInstance(autoRequirements);
+    
+            if (compiledAuto != null) {
+                compiledAuto.init();
+            }
+    
+            autoCompiled.set(true);
         }
-
-        public AutoBase getInstance(AutoRequirements autoRequirements) {
-            if (autoClass != null) {
-                try {
-
-                    AutoDescription autoDescription = autoClass.getClass().getAnnotation(AutoDescription.class);
-                    if(autoDescription != null){
-                        Dashboard.getInstance().putData(Constants.DashboardConstants.AUTO_DESCRIPTION_KEY, autoDescription.description());
+    
+        public AutoBase getCompiledAuto() {
+            return compiledAuto;
+        }
+    
+        public static enum Auto {
+            NO_AUTO(null),
+            SAUCE_AUTO(Sauce123Auto.class);
+    
+            private final Class<? extends AutoBase> autoClass;
+    
+            private Auto(Class<? extends AutoBase> autoClass) {
+                this.autoClass = autoClass;
+            }
+    
+            public AutoBase getInstance(AutoRequirements autoRequirements) {
+                if (autoClass != null) {
+                    try {
+    
+                        AutoDescription autoDescription = autoClass.getClass().getAnnotation(AutoDescription.class);
+                        if(autoDescription != null){
+                            loggedAutoDescription.set(autoDescription.description());
                     }
 
                     return autoClass.getConstructor(AutoRequirements.class).newInstance(autoRequirements);
