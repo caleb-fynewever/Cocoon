@@ -93,6 +93,16 @@ public class RobotContainer {
     // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
   }
 
+  public void forceRecompile() {
+    autoFactory.recompile();
+  }
+
+  public void precompileAuto() {
+    if (autoFactory.recompileNeeded()) {
+      autoFactory.recompile();
+    }
+  }
+
   public Command getAutonomousCommand() {
     return autoFactory.getCompiledAuto();
   }

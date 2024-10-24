@@ -47,14 +47,16 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    Logger.recordOutput("HLEO", "PLEASE");
+    Logger.recordOutput("IsReal", Robot.isReal());
   }
 
   @Override
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.precompileAuto();
+  }
 
   @Override
   public void disabledExit() {}

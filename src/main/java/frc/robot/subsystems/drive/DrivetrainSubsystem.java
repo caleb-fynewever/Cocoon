@@ -60,7 +60,8 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
                 this::getCurrentRobotChassisSpeeds,
                 (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
                 PathPlannerConstants.HOLONOMIC_PATH_FOLLOWER_CONFIG,
-                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, // Assume the path needs to be flipped for Red vs Blue, this is normally the case
+                //TODO: uhhh this red or blue might be broken
+                () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue, // Assume the path needs to be flipped for Red vs Blue, this is normally the case
                 this); // Subsystem for requirements
     }
 

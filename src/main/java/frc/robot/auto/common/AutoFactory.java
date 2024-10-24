@@ -26,7 +26,6 @@ public class AutoFactory {
     private static LoggedDashboardString loggedAutoDescription = new LoggedDashboardString(DashboardConstants.AUTO_DESCRIPTION_KEY, "No Description");
     
         private Auto currentAuto;
-        
         private AutoBase compiledAuto;
     
         public AutoFactory(
