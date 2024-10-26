@@ -6,12 +6,13 @@ package frc.robot;
 
 import java.util.function.Consumer;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.auto.common.AutoFactory;
 import frc.robot.auto.common.AutoRequirements;
+import frc.robot.commands.drive.AimChassisToGoalCommand;
 import frc.robot.commands.drive.DefaultDriveCommand;
+import frc.robot.controlboard.ControlBoard;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.vision.VisionUpdate;
@@ -19,14 +20,13 @@ import frc.robot.util.Telemetry;
 import frc.robot.util.io.Dashboard;
 
 public class RobotContainer {
-  public final Joystick driveJoystick;
-  public final Joystick turnJoystick;
-  public final Joystick controlPanel;
+
+  private final ControlBoard controlBoard = ControlBoard.getInstance();
 
   public final Dashboard dashboard;
 
   public final DrivetrainSubsystem drivetrain;
-  public final VisionSubsystem vision;
+  //public final VisionSubsystem vision;
 
   public final AutoFactory autoFactory;
 
@@ -37,15 +37,12 @@ public class RobotContainer {
     }
   };
 
-  private final RobotState robotState = new RobotState(visionEstimateConsumer);
+  public final RobotState robotState = new RobotState(visionEstimateConsumer);
 
   private final Telemetry logger = new Telemetry(DrivetrainSubsystem.getMaxVelocityMetersPerSecond());
 
   public RobotContainer() {
-    driveJoystick = new Joystick(0);
-    turnJoystick = new Joystick(1);
-    controlPanel = new Joystick(2);
-    
+
     dashboard = new Dashboard();
 
     drivetrain = new DrivetrainSubsystem(
@@ -53,24 +50,23 @@ public class RobotContainer {
         DrivetrainConstants.TUNER_DRIVETRAIN_CONSTANTS,
         DrivetrainConstants.TUNER_MODULE_CONSTANTS);
 
-    vision = new VisionSubsystem(robotState);
+    //vision = new VisionSubsystem(robotState);
 
     drivetrain.setDefaultCommand(
         new DefaultDriveCommand(
-            driveJoystick::getY,
+            controlBoard::getThrottle,
             // Sideways velocity supplier.
-            driveJoystick::getX,
+            controlBoard::getStrafe,
             // Rotation velocity supplier.
-            turnJoystick::getX,
-            () -> dashboard.isFieldCentric(),
+            controlBoard::getRotation,
+            dashboard::isFieldCentric,
             drivetrain));
 
     autoFactory = new AutoFactory(
         () -> dashboard.getAuto(),
         new AutoRequirements(
             robotState,
-            drivetrain,
-            vision));
+            drivetrain));
 
     configureBindings();
   }
@@ -78,6 +74,9 @@ public class RobotContainer {
   private void configureBindings() {
 
     drivetrain.registerTelemetry(logger::telemeterize);
+
+    controlBoard.aimToGoal().whileTrue(new AimChassisToGoalCommand(controlBoard::getThrottle, controlBoard::getStrafe,
+        controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
 
     /* Bindings for drivetrain characterization */
     /*

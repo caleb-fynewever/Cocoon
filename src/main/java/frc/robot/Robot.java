@@ -47,7 +47,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    Logger.recordOutput("IsReal", Robot.isReal());
+    m_robotContainer.robotState.output();
   }
 
   @Override

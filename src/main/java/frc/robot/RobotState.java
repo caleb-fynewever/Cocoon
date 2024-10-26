@@ -2,37 +2,39 @@ package frc.robot;
 
 import java.util.function.Consumer;
 
-import com.team254.lib.util.MathHelpers;
+import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.vision.VisionUpdate;
 
 public class RobotState {
-
-    private final static double LOOKBACK_TIME = 1.0;
-    private Pose2d fieldToRobot = MathHelpers.kPose2dZero;
-    private final TimeInterpolatableBuffer<Pose2d> odometryMeasurements = TimeInterpolatableBuffer.createBuffer(LOOKBACK_TIME);
+    private SwerveDriveState drivetrainState = new SwerveDriveState();
     
     private final Consumer<VisionUpdate> visionUpdateConsumer;
 
     public RobotState(Consumer<VisionUpdate> visionUpdateConsumer) {
         this.visionUpdateConsumer = visionUpdateConsumer;
-        // Make sure to protect callers against null.
-        fieldToRobot = MathHelpers.kPose2dZero;
     }
 
     public Pose2d getFieldToRobot() {
-        return fieldToRobot;
+        return drivetrainState.Pose;
     }
 
-    public void addFieldToRobot(Pose2d fieldToRobot) {
-        this.fieldToRobot = fieldToRobot;
+    public ChassisSpeeds getChassisSpeeds(boolean isFieldRelative) {
+        ChassisSpeeds chassisSpeeds = drivetrainState.speeds;
+        if (isFieldRelative) {
+            return ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds, getFieldToRobot().getRotation());
+        } else {
+            return chassisSpeeds;
+        }
     }
 
-    public void addOdometryMeasurement(double timestamp, Pose2d pose) {
-        odometryMeasurements.addSample(timestamp, pose);
+    public void addDrivetrainState(SwerveDriveState drivetrainState) {
+        this.drivetrainState = drivetrainState;
     }
 
     public void addVisionUpdate(VisionUpdate visionUpdate) {
@@ -51,5 +53,11 @@ public class RobotState {
         } else {
             return false;
         }
+    }
+
+    public void output() {
+        Logger.recordOutput("Swerve Module States", drivetrainState.ModuleStates);
+        Logger.recordOutput("Swerve Module Goals", drivetrainState.ModuleTargets);
+        Logger.recordOutput("Curret Pose", drivetrainState.Pose);
     }
 }

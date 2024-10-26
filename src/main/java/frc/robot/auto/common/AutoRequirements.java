@@ -6,22 +6,18 @@ package frc.robot.auto.common;
 
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
 
 /** Add your docs here. */
 public class AutoRequirements {
     private final RobotState robotState;
     private final DrivetrainSubsystem drivetrain;
-    private final VisionSubsystem vision;
 
     public AutoRequirements(
         RobotState robotState,
-        DrivetrainSubsystem drivetrain,
-        VisionSubsystem vision
+        DrivetrainSubsystem drivetrain
     ) {
         this.robotState = robotState;
         this.drivetrain = drivetrain;
-        this.vision = vision;
     }
 
     public RobotState getRobotState() {
@@ -30,9 +26,5 @@ public class AutoRequirements {
 
     public DrivetrainSubsystem getDrivetrain() {
         return drivetrain;
-    }
-
-    public VisionSubsystem getVision() {
-        return vision;
     }
 }

@@ -1,4 +1,4 @@
-package com.team254.lib.util;
+package com.team2052.lib;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,5 +29,14 @@ public class MathHelpers {
 
     public static final Transform2d transform2dFromTranslation(Translation2d translation) {
         return new Transform2d(translation, kRotation2dZero);
+    }
+
+    public static double deadband(double value, double deadband) {
+        deadband = Math.abs(deadband);
+        if (deadband == 1) {
+            return 0;
+        }
+        double scaledValue = (value + (value < 0 ? deadband : -deadband)) / (1 - deadband);
+        return (Math.abs(value) > Math.abs(deadband)) ? scaledValue : 0;
     }
 }

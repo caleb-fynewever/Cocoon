@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -37,10 +36,14 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
 
     private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
+    private RobotState robotState;
+
     public DrivetrainSubsystem(RobotState robotState, SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants... modules) {
         super(drivetrainConstants, modules);
         configurePathPlanner();
+
+        this.robotState = robotState;
 
         if(Robot.isSimulation()) {
             startSimThread();
@@ -63,45 +66,6 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
                 //TODO: uhhh this red or blue might be broken
                 () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue, // Assume the path needs to be flipped for Red vs Blue, this is normally the case
                 this); // Subsystem for requirements
-    }
-
-    /**
-    * All parameters are taken in normalized terms of [-1.0 to 1.0].
-    */
-    public void drive(
-            double inputX,
-            double inputY,
-            double inputRotation,
-            boolean fieldCentric) {
-        inputX = Math.copySign(
-                Math.min(Math.abs(inputX), 1.0),
-                inputX);
-        inputY = Math.copySign(
-                Math.min(Math.abs(inputY), 1.0),
-                inputY);
-        inputRotation = Math.copySign(
-                Math.min(Math.abs(inputRotation), 1.0),
-                inputRotation);
-
-        if (fieldCentric) {
-            SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-                    .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.1)
-                    .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.1) // Add a 10% deadband
-                    .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-                    .withVelocityX(inputX * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-                    .withVelocityY(inputY * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-                    .withRotationalRate(inputRotation * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond());
-            setControl(drive);
-        } else {
-            SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
-                    .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.1)
-                    .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.1) // Add a 10% deadband
-                    .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-                    .withVelocityX(inputX * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-                    .withVelocityY(inputY * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-                    .withRotationalRate(inputRotation * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond());
-            setControl(drive);
-        }
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -139,6 +103,8 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
                 hasAppliedOperatorPerspective = true;
             });
         }
+        
+        robotState.addDrivetrainState(super.getState());
     }
 
     public static double getMaxVelocityMetersPerSecond() {

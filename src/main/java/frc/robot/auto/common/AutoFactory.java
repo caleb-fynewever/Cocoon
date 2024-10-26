@@ -12,6 +12,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardString;
 import frc.robot.Constants;
 import frc.robot.Constants.DashboardConstants;
 import frc.robot.auto.modes.AutoBase;
+import frc.robot.auto.modes.testAutos.NewPPAuto12387;
 import frc.robot.auto.modes.testAutos.Sauce123Auto;
 import frc.robot.util.io.Dashboard;
 
@@ -62,7 +63,8 @@ public class AutoFactory {
     
         public static enum Auto {
             NO_AUTO(null),
-            SAUCE_AUTO(Sauce123Auto.class);
+            SAUCE_AUTO(Sauce123Auto.class),
+            PPAUTO12387(NewPPAuto12387.class);
     
             private final Class<? extends AutoBase> autoClass;
     

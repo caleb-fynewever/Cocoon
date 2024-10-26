@@ -23,6 +23,12 @@ import frc.robot.subsystems.drive.ctre.generated.TunerConstants;
 import frc.robot.subsystems.vision.TagTracker.TagTrackerConstants;
 
 public class Constants {
+
+    public static class DriverConstants {
+        public static final boolean FORCE_GAMEPAD = true;
+        public static final double JOYSTICK_DEADBAND = 0.075;
+        public static final double GAMEPAD_DEADBAND = 0.0; // add deadband here if there is drift
+    }
     public static class DrivetrainConstants {
         // Left-to-right distance between drivetrain wheels
         public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(24);
@@ -53,6 +59,16 @@ public class Constants {
         public static final int AUTO_PRIORITY = 1;
         public static final int SNAP_PRIORITY = 2;
         public static final int AIM_PRIORITY = 3;
+
+
+        public static final double SNAP_PID_kP = 2.5;
+        public static final double SNAP_PID_kI = 0.0;
+        public static final double SNAP_PID_kD = 0.1;
+        public static final double SNAP_PID_kF = 0.0;
+
+        public static final double ROTATIONAL_FEEDFORWARD_kS = 0;// 0.61;
+        public static final double ROTATIONAL_FEEDFORWARD_kV = 0;// 12 * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond();
+        public static final double ROTATIONAL_FEEDFORAWRD_kA = 0.0;
     }
     
     public static class VisionConstants {
