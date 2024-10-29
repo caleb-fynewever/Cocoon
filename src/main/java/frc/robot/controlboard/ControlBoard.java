@@ -24,14 +24,13 @@ public class ControlBoard implements IPrimaryControlBoard, ISecondaryControlBoar
     private final ISecondaryControlBoard secondaryControlBoard;
 
     private ControlBoard() {
-        boolean useDriveGamepad =
-                DriverConstants.FORCE_GAMEPAD ||
-                DriverStation.getJoystickIsXbox(Ports.GAMEPAD_PORT);
-                primaryControlBoard = useDriveGamepad ? GamepadPrimaryInput.getInstance()
-                : JoystickPrimaryInput.getInstance();
-                secondaryControlBoard = ControlPanelInput.getInstance();
+        boolean useDriveGamepad = DriverConstants.FORCE_GAMEPAD || DriverStation.getJoystickIsXbox(Ports.GAMEPAD_PORT);
+        primaryControlBoard = useDriveGamepad ? GamepadPrimaryInput.getInstance() : JoystickPrimaryInput.getInstance();
+        secondaryControlBoard = ControlPanelInput.getInstance();
     }
-    
+
+    /* Primary */
+
     @Override
     public double getThrottle() {
         return primaryControlBoard.getThrottle();
@@ -46,7 +45,17 @@ public class ControlBoard implements IPrimaryControlBoard, ISecondaryControlBoar
     public double getRotation() {
         return primaryControlBoard.getRotation();
     }
-    
+
+    @Override
+    public Trigger pov() {
+        return primaryControlBoard.pov();
+    }
+
+    @Override
+    public double povVal() {
+        return primaryControlBoard.povVal();
+    }
+
     @Override
     public Trigger resetGyro() {
         return primaryControlBoard.resetGyro();
@@ -54,7 +63,12 @@ public class ControlBoard implements IPrimaryControlBoard, ISecondaryControlBoar
 
     @Override
     public Trigger aimToGoal() {
-       return primaryControlBoard.aimToGoal();
+        return primaryControlBoard.aimToGoal();
+    }
+
+    @Override
+    public Trigger aimToAmp() {
+        return primaryControlBoard.aimToAmp();
     }
 
     @Override
@@ -65,5 +79,12 @@ public class ControlBoard implements IPrimaryControlBoard, ISecondaryControlBoar
     @Override
     public Trigger shoot() {
         return primaryControlBoard.shoot();
+    }
+
+    /* Secondary */
+
+    @Override
+    public Trigger climb() {
+        return secondaryControlBoard.climb();
     }
 }

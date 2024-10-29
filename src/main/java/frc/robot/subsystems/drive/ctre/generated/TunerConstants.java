@@ -60,7 +60,7 @@ public class TunerConstants {
 
     // These are only used for simulation
     private static final double kSteerInertia = 0.00001;
-    private static final double kDriveInertia = 0.001;
+    private static final double kDriveInertia = 0.005;
     // Simulated voltage necessary to overcome friction
     private static final double kSteerFrictionVoltage = 0.25;
     private static final double kDriveFrictionVoltage = 0.25;

@@ -25,7 +25,7 @@ import frc.robot.subsystems.vision.TagTracker.TagTrackerConstants;
 public class Constants {
 
     public static class DriverConstants {
-        public static final boolean FORCE_GAMEPAD = true;
+        public static final boolean FORCE_GAMEPAD = false;
         public static final double JOYSTICK_DEADBAND = 0.075;
         public static final double GAMEPAD_DEADBAND = 0.0; // add deadband here if there is drift
     }
@@ -69,6 +69,8 @@ public class Constants {
         public static final double ROTATIONAL_FEEDFORWARD_kS = 0;// 0.61;
         public static final double ROTATIONAL_FEEDFORWARD_kV = 0;// 12 * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond();
         public static final double ROTATIONAL_FEEDFORAWRD_kA = 0.0;
+
+        public static final double HEADING_TOLERANCE = 3;
     }
     
     public static class VisionConstants {

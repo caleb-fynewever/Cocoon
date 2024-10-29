@@ -63,8 +63,18 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
                 this::getCurrentRobotChassisSpeeds,
                 (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
                 PathPlannerConstants.HOLONOMIC_PATH_FOLLOWER_CONFIG,
-                //TODO: uhhh this red or blue might be broken
-                () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue, // Assume the path needs to be flipped for Red vs Blue, this is normally the case
+                () -> {
+                    // Boolean supplier that controls when the path will be mirrored for the red
+                    // alliance
+                    // This will flip the path being followed to the red side of the field.
+                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
                 this); // Subsystem for requirements
     }
 

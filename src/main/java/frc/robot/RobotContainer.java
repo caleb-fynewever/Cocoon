@@ -6,12 +6,15 @@ package frc.robot;
 
 import java.util.function.Consumer;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.auto.common.AutoFactory;
 import frc.robot.auto.common.AutoRequirements;
 import frc.robot.commands.drive.AimChassisToGoalCommand;
 import frc.robot.commands.drive.DefaultDriveCommand;
+import frc.robot.commands.drive.SnapToAngleCommand;
 import frc.robot.controlboard.ControlBoard;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
@@ -75,8 +78,17 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
+    controlBoard.resetGyro().onTrue(new InstantCommand(() -> drivetrain.seedFieldRelative()));
+
     controlBoard.aimToGoal().whileTrue(new AimChassisToGoalCommand(controlBoard::getThrottle, controlBoard::getStrafe,
         controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
+
+    Rotation2d ampDirection = Rotation2d.fromDegrees(robotState.isRedAlliance() ? 90 : 270);
+    controlBoard.aimToAmp().whileTrue(new SnapToAngleCommand(ampDirection, controlBoard::getThrottle, controlBoard::getStrafe,
+            controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
+
+    // controlBoard.pov().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(controlBoard.povVal()), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
 
     /* Bindings for drivetrain characterization */
     /*

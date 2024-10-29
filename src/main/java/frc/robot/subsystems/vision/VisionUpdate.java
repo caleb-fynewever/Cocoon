@@ -23,7 +23,6 @@ public class VisionUpdate {
     public double highestAmbiguity = 0.0;
     public double avgTagArea = 0.0;
     public final double poseDifference;
-    private final Matrix<N3, N1> visionMeasurementStdDevs;
 
     public VisionUpdate(String cameraName, EstimatedRobotPose estimatedRobotPose, Pose2d currentRobotPose) {
         this.cameraName = cameraName;
@@ -31,7 +30,6 @@ public class VisionUpdate {
         this.strategyUsed = estimatedRobotPose.strategy;
         this.targetsUsed = estimatedRobotPose.targetsUsed;
         this.timestampSeconds = estimatedRobotPose.timestampSeconds;
-        this.visionMeasurementStdDevs = getVisionMeasurementStdDevs();
         
         for (PhotonTrackedTarget target : targetsUsed) {
             highestAmbiguity = Math.max(highestAmbiguity, target.getPoseAmbiguity());

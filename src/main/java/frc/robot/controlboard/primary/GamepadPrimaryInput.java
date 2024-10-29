@@ -39,13 +39,19 @@ public class GamepadPrimaryInput implements IPrimaryControlBoard{
     }
 
     @Override
-    public Trigger resetGyro() {
-        return controller.back().and(controller.start().negate());
+    public Trigger pov() {
+        return controller.povCenter().negate();
     }
 
     @Override
-    public Trigger aimToGoal() {
-        return controller.button(1);
+    public double povVal() {
+        // TODO: add pov stuff for controller
+        return 0;
+    }
+
+    @Override
+    public Trigger resetGyro() {
+        return controller.back().and(controller.start().negate());
     }
 
     @Override
@@ -56,5 +62,15 @@ public class GamepadPrimaryInput implements IPrimaryControlBoard{
     @Override
     public Trigger shoot() {
         return controller.rightTrigger(0.125);
+    }
+
+    @Override
+    public Trigger aimToGoal() {
+        return controller.button(1);
+    }
+
+    @Override
+    public Trigger aimToAmp() {
+        return controller.button(2);
     }
 }

@@ -4,27 +4,58 @@
 
 package frc.robot.commands.drive;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
-public class SnapToAngleCommand extends Command {
-  /** Creates a new DriveWhilePointAngleCommand. */
-  public SnapToAngleCommand() {
-    // Use addRequirements() here to declare subsystem dependencies.
+import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import frc.robot.RobotState;
+import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.subsystems.drive.DrivetrainSubsystem;
+
+public class SnapToAngleCommand extends DefaultDriveCommand {
+  private final RobotState robotState;
+
+  private SwerveRequest.FieldCentricFacingAngle drive;
+
+  private Rotation2d desiredDirection;
+
+  public SnapToAngleCommand(
+      Rotation2d desiredDirection,
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier,
+      DoubleSupplier rotationSupplier,
+      BooleanSupplier fieldCentricSupplier,
+      DrivetrainSubsystem drivetrain,
+      RobotState robotState) {
+    super(xSupplier, ySupplier, rotationSupplier, fieldCentricSupplier, drivetrain);
+    this.robotState = robotState;
+    this.desiredDirection = desiredDirection;
+
+    drive = new SwerveRequest.FieldCentricFacingAngle()
+    .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
+    .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
+
+    drive.HeadingController.setPID(3.5, 0, 0);
+    drive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
+    drive.HeadingController.setTolerance(Units.degreesToRadians(DrivetrainConstants.HEADING_TOLERANCE));
+    Logger.recordOutput("Snap Direction ", desiredDirection.getDegrees());
   }
 
-  // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public SwerveRequest getSwerveRequest() {
+    drive.withTargetDirection(desiredDirection)
+            .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
+            .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond());
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
+    return drive;
+  }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

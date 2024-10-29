@@ -8,13 +8,19 @@ public interface IPrimaryControlBoard {
     double getStrafe();
 
     double getRotation();
+    
+    Trigger pov();
+
+    double povVal();
 
     Trigger resetGyro();
-
-    Trigger aimToGoal();
 
     // Real Controls
     Trigger intake();
 
     Trigger shoot();
+
+    Trigger aimToGoal();
+
+    Trigger aimToAmp();
 }

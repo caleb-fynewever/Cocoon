@@ -8,7 +8,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -29,7 +28,7 @@ public class AimChassisToGoalCommand extends DefaultDriveCommand {
      * @param ySupplier        supplier for sideways velocity.
      * @param rotationSupplier supplier for angular velocity.
      */
-    public AimChassisToGoalCommand(
+    public AimChassisToGoalCommand (
             DoubleSupplier xSupplier,
             DoubleSupplier ySupplier,
             DoubleSupplier rotationSupplier,
@@ -53,7 +52,6 @@ public class AimChassisToGoalCommand extends DefaultDriveCommand {
 
     @Override
     public SwerveRequest getSwerveRequest() {
-        System.out.println("aiming to goal " + calculateHeading().getDegrees());
         drive.withTargetDirection(calculateHeading())
                 .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
                 .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond());
