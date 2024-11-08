@@ -1,5 +1,7 @@
 package frc.robot.controlboard.primary;
 
+import edu.wpi.first.wpilibj.event.EventLoop;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public interface IPrimaryControlBoard {
@@ -9,9 +11,15 @@ public interface IPrimaryControlBoard {
 
     double getRotation();
     
-    Trigger pov();
-
-    double povVal();
+    EventLoop povLooper =  CommandScheduler.getInstance().getDefaultButtonLoop();
+    Trigger povUp();
+    Trigger povUpRight();
+    Trigger povRight();
+    Trigger povDownRight();
+    Trigger povDown();
+    Trigger povDownLeft();
+    Trigger povLeft();
+    Trigger povUpLeft();
 
     Trigger resetGyro();
 

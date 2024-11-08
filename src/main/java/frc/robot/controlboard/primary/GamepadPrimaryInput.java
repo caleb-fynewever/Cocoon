@@ -39,14 +39,43 @@ public class GamepadPrimaryInput implements IPrimaryControlBoard{
     }
 
     @Override
-    public Trigger pov() {
-        return controller.povCenter().negate();
+    public Trigger povUp() {
+        return controller.povUp();
     }
 
     @Override
-    public double povVal() {
-        // TODO: add pov stuff for controller
-        return 0;
+    public Trigger povUpRight() {
+        return controller.povUpRight();
+    }
+
+    @Override
+    public Trigger povRight() {
+        return controller.povRight();
+    }
+
+    @Override
+    public Trigger povDownRight() {
+        return controller.povDownRight();
+    }
+
+    @Override
+    public Trigger povDown() {
+        return controller.povDown();
+    }
+
+    @Override
+    public Trigger povDownLeft() {
+        return controller.povDownLeft();
+    }
+
+    @Override
+    public Trigger povLeft() {
+        return controller.povLeft();
+    }
+
+    @Override
+    public Trigger povUpLeft() {
+        return controller.povUpLeft();
     }
 
     @Override

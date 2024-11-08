@@ -1,5 +1,6 @@
 package frc.robot.subsystems.vision;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.photonvision.EstimatedRobotPose;
@@ -18,7 +19,7 @@ public class VisionUpdate {
     public final String cameraName;
     public final Pose3d estimatedPose;
     public final PoseStrategy strategyUsed;
-    public final List<PhotonTrackedTarget> targetsUsed;
+    public List<PhotonTrackedTarget> targetsUsed;
     public final double timestampSeconds;
     public double highestAmbiguity = 0.0;
     public double avgTagArea = 0.0;
@@ -31,12 +32,16 @@ public class VisionUpdate {
         this.targetsUsed = estimatedRobotPose.targetsUsed;
         this.timestampSeconds = estimatedRobotPose.timestampSeconds;
         
-        for (PhotonTrackedTarget target : targetsUsed) {
-            highestAmbiguity = Math.max(highestAmbiguity, target.getPoseAmbiguity());
-
-            avgTagArea += target.getArea();
+        if (targetsUsed != null) {
+            for (PhotonTrackedTarget target : targetsUsed) {
+                highestAmbiguity = Math.max(highestAmbiguity, target.getPoseAmbiguity());
+    
+                avgTagArea += target.getArea();
+            }
+            avgTagArea /= targetsUsed.size();
+        } else {
+            targetsUsed = new ArrayList<PhotonTrackedTarget>();
         }
-        avgTagArea /= targetsUsed.size();
         
         // distance from current pose to vision estimated pose
         poseDifference = estimatedPose.getTranslation().toTranslation2d().getDistance(currentRobotPose.getTranslation());

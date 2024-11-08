@@ -17,6 +17,7 @@
       "/SmartDashboard/Module 1": "Mechanism2d",
       "/SmartDashboard/Module 2": "Mechanism2d",
       "/SmartDashboard/Module 3": "Mechanism2d",
+      "/SmartDashboard/VisionSystemSim-VisionSubsystemSim/Sim Field": "Field2d",
       "/Telemetry": "Field2d"
     },
     "windows": {
@@ -54,7 +55,8 @@
         "open": true
       },
       "open": true
-    }
+    },
+    "visible": true
   },
   "NetworkTables View": {
     "visible": false

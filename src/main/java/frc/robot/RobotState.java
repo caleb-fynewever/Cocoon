@@ -21,7 +21,11 @@ public class RobotState {
     }
 
     public Pose2d getFieldToRobot() {
-        return drivetrainState.Pose;
+        if(drivetrainState.Pose != null) {
+            return drivetrainState.Pose;
+        }
+
+        return new Pose2d();
     }
 
     public ChassisSpeeds getChassisSpeeds(boolean isFieldRelative) {

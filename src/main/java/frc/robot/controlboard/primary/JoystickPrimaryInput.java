@@ -3,7 +3,6 @@ package frc.robot.controlboard.primary;
 import com.team2052.lib.MathHelpers;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriverConstants;
@@ -44,13 +43,43 @@ public class JoystickPrimaryInput implements IPrimaryControlBoard {
     }
 
     @Override
-    public Trigger pov() {
-        return new Trigger(() -> rotateStick.getPOV() != -1);
+    public Trigger povUp() {
+        return new Trigger(rotateStick.povUp(povLooper)::getAsBoolean);
     }
 
     @Override
-    public double povVal() {
-        return rotateStick.getPOV();
+    public Trigger povUpRight() {
+        return new Trigger(rotateStick.povUpRight(povLooper)::getAsBoolean);
+    }
+
+    @Override
+    public Trigger povRight() {
+        return new Trigger(rotateStick.povRight(povLooper)::getAsBoolean);
+    }
+
+    @Override
+    public Trigger povDownRight() {
+        return new Trigger(rotateStick.povDownRight(povLooper)::getAsBoolean);
+    }
+
+    @Override
+    public Trigger povDown() {
+        return new Trigger(rotateStick.povDown(povLooper)::getAsBoolean);
+    }
+
+    @Override
+    public Trigger povDownLeft() {
+        return new Trigger(rotateStick.povDownLeft(povLooper)::getAsBoolean);
+    }
+
+    @Override
+    public Trigger povLeft() {
+        return new Trigger(rotateStick.povLeft(povLooper)::getAsBoolean);
+    }
+
+    @Override
+    public Trigger povUpLeft() {
+        return new Trigger(rotateStick.povUpLeft(povLooper)::getAsBoolean);
     }
 
     @Override

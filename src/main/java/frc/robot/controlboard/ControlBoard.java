@@ -27,6 +27,10 @@ public class ControlBoard implements IPrimaryControlBoard, ISecondaryControlBoar
         boolean useDriveGamepad = DriverConstants.FORCE_GAMEPAD || DriverStation.getJoystickIsXbox(Ports.GAMEPAD_PORT);
         primaryControlBoard = useDriveGamepad ? GamepadPrimaryInput.getInstance() : JoystickPrimaryInput.getInstance();
         secondaryControlBoard = ControlPanelInput.getInstance();
+
+        if(!useDriveGamepad) {
+            IPrimaryControlBoard.povLooper.poll();
+        }
     }
 
     /* Primary */
@@ -45,15 +49,44 @@ public class ControlBoard implements IPrimaryControlBoard, ISecondaryControlBoar
     public double getRotation() {
         return primaryControlBoard.getRotation();
     }
-
     @Override
-    public Trigger pov() {
-        return primaryControlBoard.pov();
+    public Trigger povUp() {
+        return primaryControlBoard.povUp();
     }
 
     @Override
-    public double povVal() {
-        return primaryControlBoard.povVal();
+    public Trigger povUpRight() {
+        return primaryControlBoard.povUpRight();
+    }
+
+    @Override
+    public Trigger povRight() {
+        return primaryControlBoard.povRight();
+    }
+
+    @Override
+    public Trigger povDownRight() {
+        return primaryControlBoard.povDownRight();
+    }
+
+    @Override
+    public Trigger povDown() {
+        return primaryControlBoard.povDown();
+    }
+
+    @Override
+    public Trigger povDownLeft() {
+        return primaryControlBoard.povDownLeft();
+    }
+
+    @Override
+    public Trigger povLeft() {
+        return primaryControlBoard.povLeft();
+    }
+
+    @Override
+    public Trigger povUpLeft() {
+        return primaryControlBoard.povUpLeft();
     }
 
     @Override

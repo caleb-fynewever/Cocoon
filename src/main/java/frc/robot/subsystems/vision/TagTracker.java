@@ -9,15 +9,19 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Transform3d;
+import frc.robot.RobotState;
 
 public class TagTracker {
     private PhotonPoseEstimator poseEstimator;
     public PhotonCamera photonCamera;
+    public TagTrackerConstants constants;
+    public RobotState robotState;
 
-    public TagTracker(TagTrackerConstants camConstants) {
-        photonCamera = new PhotonCamera(camConstants.name);
-
-        poseEstimator = new PhotonPoseEstimator(camConstants.tagLayout, camConstants.strategy, photonCamera, camConstants.robotToCamera);
+    public TagTracker(TagTrackerConstants camConstants, RobotState robotState) {
+        this.constants = camConstants;
+        this.photonCamera = new PhotonCamera(camConstants.name);
+        this.poseEstimator = new PhotonPoseEstimator(camConstants.tagLayout, camConstants.strategy, photonCamera, camConstants.robotToCamera);
+        this.robotState = robotState;
     }
 
     public String getName() {
@@ -27,7 +31,7 @@ public class TagTracker {
     public Optional<VisionUpdate> getVisionUpdate() {
         Optional<EstimatedRobotPose> estimatedRobotPose = poseEstimator.update();
         if(estimatedRobotPose.isPresent()){
-            return Optional.of(new VisionUpdate(this.photonCamera.getName(), estimatedRobotPose.get(), null));
+            return Optional.of(new VisionUpdate(this.photonCamera.getName(), estimatedRobotPose.get(), robotState.getFieldToRobot()));
         } else {
             return Optional.empty();
         }
