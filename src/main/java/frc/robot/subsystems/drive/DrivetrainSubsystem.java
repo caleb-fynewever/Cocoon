@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drive;
 
 import java.util.function.Supplier;
+import java.util.Optional;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
@@ -27,11 +28,8 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier simNotifier = null;
     private double lastSimTime;
-    /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
-    private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
-    /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
-    private final Rotation2d RedAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
-    /* Keep track if we've ever applied the operator perspective before or not */
+
+    /* Keep track if we've ever applied the driver perspective before or not */
     private boolean hasAppliedOperatorPerspective = false;
 
     private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
@@ -45,7 +43,7 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
 
         this.robotState = robotState;
 
-        if(Robot.isSimulation()) {
+        if (Robot.isSimulation()) {
             startSimThread();
         }
     }
@@ -63,18 +61,10 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
                 this::getCurrentRobotChassisSpeeds,
                 (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
                 PathPlannerConstants.HOLONOMIC_PATH_FOLLOWER_CONFIG,
-                () -> {
-                    // Boolean supplier that controls when the path will be mirrored for the red
-                    // alliance
-                    // This will flip the path being followed to the red side of the field.
-                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-                    var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
-                },
+                //path will be mirrored for the red alliance
+                // This will flip the path being followed to the red side of the field.
+                // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+                () -> DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().equals(Optional.of(Alliance.Red)),
                 this); // Subsystem for requirements
     }
 
@@ -103,17 +93,15 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
         /* Periodically try to apply the operator perspective */
         /* If we haven't applied the operator perspective before, then we should apply it regardless of DS state */
         /* This allows us to correct the perspective in case the robot code restarts mid-match */
-        /* Otherwise, only check and apply the operator perspective if the DS is disabled */
-        /* This ensures driving behavior doesn't change until an explicit disable event occurs during testing*/
         if (!hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent((allianceColor) -> {
                 this.setOperatorPerspectiveForward(
-                        allianceColor == Alliance.Red ? RedAlliancePerspectiveRotation
-                                : BlueAlliancePerspectiveRotation);
+                        allianceColor == Alliance.Red ? Rotation2d.fromDegrees(180)
+                                : Rotation2d.fromDegrees(0));
                 hasAppliedOperatorPerspective = true;
             });
         }
-        
+
         robotState.addDrivetrainState(super.getState());
     }
 

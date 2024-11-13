@@ -38,7 +38,12 @@ public class Constants {
         public static final Translation2d DRIVETRAIN_TO_ROBOT_CENTER_METERS = new Translation2d(
                 Units.inchesToMeters(2.25),
                 0);
-        
+        /* 
+        * If using the generator, the order in which modules are constructed is
+        * Front Left, Front Right, Back Left, Back Right. This means if you need
+        * the Back Left module, call {@code getModule(2);} to get the 3rd index
+        * (0-indexed) module, corresponding to the Back Left module.
+        */
         public static final SwerveDrivetrainConstants TUNER_DRIVETRAIN_CONSTANTS = TunerConstants.DriveTrain.getDriveTrainConstants();
         public static final SwerveModuleConstants[] TUNER_MODULE_CONSTANTS = TunerConstants.DriveTrain.getModuleConstants();
         public static final double MAX_SPEED = 4.43676260556;

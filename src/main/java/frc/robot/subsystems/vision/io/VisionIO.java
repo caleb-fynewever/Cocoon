@@ -1,10 +1,13 @@
-package frc.robot.subsystems.vision;
+package frc.robot.subsystems.vision.io;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public interface IVisionSubsystem {
+import frc.robot.subsystems.vision.TagTracker;
+import frc.robot.subsystems.vision.VisionUpdate;
+
+public interface VisionIO {
 
     List<VisionUpdate> visionUpdates = new ArrayList<VisionUpdate>();
     List<VisionUpdate> synchronizedVisionUpdates = Collections.synchronizedList(visionUpdates);

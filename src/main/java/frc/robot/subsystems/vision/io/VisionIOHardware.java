@@ -1,4 +1,4 @@
-package frc.robot.subsystems.vision;
+package frc.robot.subsystems.vision.io;
 
 import java.util.Optional;
 
@@ -10,13 +10,12 @@ import frc.robot.Constants.VisionConstants.Camera0Constants;
 import frc.robot.Constants.VisionConstants.Camera1Constants;
 import frc.robot.Constants.VisionConstants.Camera2Constants;
 import frc.robot.Constants.VisionConstants.Camera3Constants;
+import frc.robot.subsystems.vision.TagTracker;
+import frc.robot.subsystems.vision.VisionUpdate;
 import frc.robot.RobotState;
 
-public class VisionHardware implements IVisionSubsystem {
-    private RobotState robotState;
-
-    public VisionHardware(RobotState robotState) {
-        this.robotState = robotState;
+public class VisionIOHardware implements VisionIO {
+    public VisionIOHardware(RobotState robotState) {
         Collections.addAll(
                 cameras,
                 new TagTracker(Camera0Constants.TagTrackerConstants(), robotState),

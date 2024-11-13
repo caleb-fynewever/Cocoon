@@ -10,7 +10,7 @@ import frc.robot.auto.common.AutoDescription;
 import frc.robot.auto.common.AutoRequirements;
 import frc.robot.auto.modes.AutoBase;
 
-@AutoDescription(description = "saucy 123 like a bbq on july three")
+@AutoDescription(description = "saucy 123 like a bbq on july fourth")
 public class Sauce123Auto extends AutoBase{
     private final static PathPlannerPath startPathCenterTo1 = PathPlannerPath.fromPathFile("Path-C-1");
     private final static PathPlannerPath path1To2 = PathPlannerPath.fromPathFile("Path-1-2");
