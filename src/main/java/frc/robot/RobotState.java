@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.SwerveDriveState;
+import com.team2052.lib.MathHelpers;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -25,7 +26,7 @@ public class RobotState {
             return drivetrainState.Pose;
         }
 
-        return new Pose2d();
+        return MathHelpers.POSE_2D_ZERO;
     }
 
     public ChassisSpeeds getChassisSpeeds(boolean isFieldRelative) {
@@ -62,6 +63,6 @@ public class RobotState {
     public void output() {
         Logger.recordOutput("Swerve Module States", drivetrainState.ModuleStates);
         Logger.recordOutput("Swerve Module Goals", drivetrainState.ModuleTargets);
-        Logger.recordOutput("Curret Pose", drivetrainState.Pose);
+        Logger.recordOutput("Current Pose", drivetrainState.Pose);
     }
 }

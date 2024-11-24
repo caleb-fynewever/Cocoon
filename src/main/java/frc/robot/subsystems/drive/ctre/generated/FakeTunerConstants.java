@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.ctre.CommandSwerveDrivetrain;
 
-public class TunerConstants {
+public class FakeTunerConstants {
     // Both sets of gains need to be tuned to your individual robot.
 
     // The steer motor uses any SwerveModule.SteerRequestType control request with

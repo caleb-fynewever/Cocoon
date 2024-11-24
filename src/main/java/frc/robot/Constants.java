@@ -19,7 +19,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.drive.ctre.generated.TunerConstants;
+import frc.robot.subsystems.drive.ctre.generated.FakeTunerConstants;
 import frc.robot.subsystems.vision.TagTracker.TagTrackerConstants;
 
 public class Constants {
@@ -44,8 +44,8 @@ public class Constants {
         * the Back Left module, call {@code getModule(2);} to get the 3rd index
         * (0-indexed) module, corresponding to the Back Left module.
         */
-        public static final SwerveDrivetrainConstants TUNER_DRIVETRAIN_CONSTANTS = TunerConstants.DriveTrain.getDriveTrainConstants();
-        public static final SwerveModuleConstants[] TUNER_MODULE_CONSTANTS = TunerConstants.DriveTrain.getModuleConstants();
+        public static final SwerveDrivetrainConstants TUNER_DRIVETRAIN_CONSTANTS = FakeTunerConstants.DriveTrain.getDrivetrainConstants();
+        public static final SwerveModuleConstants[] TUNER_MODULE_CONSTANTS = FakeTunerConstants.DriveTrain.getModuleConstants();
         public static final double MAX_SPEED = 4.43676260556;
 
         public static final Matrix<N3, N1> ODOMETRY_STDDEV = VecBuilder.fill(0.1, 0.1, 0.1);
@@ -245,7 +245,7 @@ public class Constants {
                         ROTATION_KP,
                         ROTATION_KI,
                         ROTATION_KD), // Rotation PID constants
-                TunerConstants.kSpeedAt12VoltsMps, // Max module speed, in m/s
+                FakeTunerConstants.kSpeedAt12VoltsMps, // Max module speed, in m/s
                 DRIVE_BASE_RADIUS_METERS, // Drive base radius in meters. Distance from robot center to furthest module.
                 new ReplanningConfig() // Default path replanning config. See the API for the options here
         );

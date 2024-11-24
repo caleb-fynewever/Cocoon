@@ -3,6 +3,7 @@ package frc.robot.util;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.SwerveDriveState;
+import com.team2052.lib.MathHelpers;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -46,7 +47,7 @@ public class Telemetry {
     private final DoublePublisher odomFreq = driveStats.getDoubleTopic("Odometry Frequency").publish();
 
     /* Keep a reference of the last pose to calculate the speeds */
-    private Pose2d m_lastPose = new Pose2d();
+    private Pose2d m_lastPose = MathHelpers.POSE_2D_ZERO;
     private double lastTime = Utils.getCurrentTimeSeconds();
 
     /* Mechanisms to represent the swerve module states */

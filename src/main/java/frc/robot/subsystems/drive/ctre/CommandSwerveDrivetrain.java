@@ -9,16 +9,16 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
  */
 public class CommandSwerveDrivetrain {
 
-    SwerveDrivetrainConstants driveTrainConstants;
+    SwerveDrivetrainConstants drivetrainConstants;
     SwerveModuleConstants[] moduleConstants;
 
-    public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
-        this.driveTrainConstants = driveTrainConstants;
+    public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants... modules) {
+        this.drivetrainConstants = drivetrainConstants;
         this.moduleConstants = modules;
     }
 
-    public SwerveDrivetrainConstants getDriveTrainConstants() {
-        return driveTrainConstants;
+    public SwerveDrivetrainConstants getDrivetrainConstants() {
+        return drivetrainConstants;
     }
 
     public SwerveModuleConstants[] getModuleConstants() {

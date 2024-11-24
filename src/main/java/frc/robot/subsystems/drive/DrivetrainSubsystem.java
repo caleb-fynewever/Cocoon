@@ -21,7 +21,7 @@ import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Robot;
 import frc.robot.RobotState;
-import frc.robot.subsystems.drive.ctre.generated.TunerConstants;
+import frc.robot.subsystems.drive.ctre.generated.FakeTunerConstants;
 import frc.robot.subsystems.vision.VisionUpdate;
 
 public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
@@ -106,7 +106,7 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
     }
 
     public static double getMaxVelocityMetersPerSecond() {
-        return TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
+        return FakeTunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
     }
 
     public static double getMaxAngularVelocityRadiansPerSecond() {
