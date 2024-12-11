@@ -10,7 +10,7 @@ import frc.robot.auto.common.AutoDescription;
 import frc.robot.auto.common.AutoRequirements;
 import frc.robot.auto.modes.AutoBase;
 
-@AutoDescription(description = "center to full front line pickup, amp side 8 + 7 and score")
+@AutoDescription(description = "Center to close 3 pickup, amp side 8 + 7")
 public class NewPPAuto12387 extends AutoBase {
     private final static PathPlannerPath startPathCenterTo1 = PathPlannerPath.fromPathFile("StP-CS-1");
     private final static PathPlannerPath pickUpPathS1To2 = PathPlannerPath.fromPathFile("PiPS1-2");
