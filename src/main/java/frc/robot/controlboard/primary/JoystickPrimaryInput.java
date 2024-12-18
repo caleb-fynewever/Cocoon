@@ -29,17 +29,17 @@ public class JoystickPrimaryInput implements IPrimaryControlBoard {
 
     @Override
     public double getThrottle() {
-        return MathHelpers.deadband(translateStick.getRawAxis(1), DriverConstants.JOYSTICK_DEADBAND);
+        return MathHelpers.deadband(translateStick.getY(), DriverConstants.JOYSTICK_DEADBAND);
     }
 
     @Override
     public double getStrafe() {
-        return MathHelpers.deadband(translateStick.getRawAxis(0), DriverConstants.JOYSTICK_DEADBAND);
+        return MathHelpers.deadband(translateStick.getX(), DriverConstants.JOYSTICK_DEADBAND);
     }
 
     @Override
     public double getRotation() {
-        return MathHelpers.deadband(-rotateStick.getRawAxis(0), DriverConstants.JOYSTICK_DEADBAND);
+        return MathHelpers.deadband(-rotateStick.getX(), DriverConstants.JOYSTICK_DEADBAND);
     }
 
     @Override
