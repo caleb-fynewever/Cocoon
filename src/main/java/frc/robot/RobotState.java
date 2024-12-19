@@ -4,12 +4,12 @@ import java.util.function.Consumer;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.SwerveDriveState;
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.team2052.lib.MathHelpers;
 
+import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.vision.VisionUpdate;
 
 public class RobotState {
@@ -30,7 +30,7 @@ public class RobotState {
     }
 
     public ChassisSpeeds getChassisSpeeds(boolean isFieldRelative) {
-        ChassisSpeeds chassisSpeeds = drivetrainState.speeds;
+        ChassisSpeeds chassisSpeeds = drivetrainState.Speeds;
         if (isFieldRelative) {
             return ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds, getFieldToRobot().getRotation());
         } else {
