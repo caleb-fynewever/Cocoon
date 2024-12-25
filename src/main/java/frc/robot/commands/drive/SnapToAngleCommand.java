@@ -4,18 +4,15 @@
 
 package frc.robot.commands.drive;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.Logger;
 
 public class SnapToAngleCommand extends DefaultDriveCommand {
   private SwerveRequest.FieldCentricFacingAngle drive;
@@ -31,21 +28,24 @@ public class SnapToAngleCommand extends DefaultDriveCommand {
     super(xSupplier, ySupplier, rotationSupplier, fieldCentricSupplier);
     this.desiredDirection = desiredDirection;
 
-    drive = new SwerveRequest.FieldCentricFacingAngle()
-    .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
-    .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
+    drive =
+        new SwerveRequest.FieldCentricFacingAngle()
+            .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
+            .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
 
     drive.HeadingController.setPID(3.5, 0, 0);
     drive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
-    drive.HeadingController.setTolerance(Units.degreesToRadians(DrivetrainConstants.HEADING_TOLERANCE));
+    drive.HeadingController.setTolerance(
+        Units.degreesToRadians(DrivetrainConstants.HEADING_TOLERANCE));
     Logger.recordOutput("Snap Direction ", desiredDirection.getDegrees());
   }
 
   @Override
   public SwerveRequest getSwerveRequest() {
-    drive.withTargetDirection(desiredDirection)
-            .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-            .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond());
+    drive
+        .withTargetDirection(desiredDirection)
+        .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
+        .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond());
 
     return drive;
   }

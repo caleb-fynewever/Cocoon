@@ -4,102 +4,98 @@
 
 package frc.robot.auto.common;
 
-import java.util.function.Supplier;
-
-import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
-import org.littletonrobotics.junction.networktables.LoggedNetworkString;
-
 import frc.robot.Constants.DashboardConstants;
 import frc.robot.auto.modes.AutoBase;
 import frc.robot.auto.modes.testAutos.CompileTest;
 import frc.robot.auto.modes.testAutos.NewPPAuto12387;
 import frc.robot.auto.modes.testAutos.Sauce123Auto;
 import frc.robot.util.io.Dashboard;
+import java.util.function.Supplier;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
+import org.littletonrobotics.junction.networktables.LoggedNetworkString;
 
-/**
- * Responsible for selecting, compiling, and recompiling autos before the start
- * of a match.
- */
+/** Responsible for selecting, compiling, and recompiling autos before the start of a match. */
 public class AutoFactory {
-    private final Supplier<Auto> autoSupplier = () -> Dashboard.getInstance().getAuto();
+  private final Supplier<Auto> autoSupplier = () -> Dashboard.getInstance().getAuto();
 
-    private static LoggedNetworkBoolean autoCompiled = new LoggedNetworkBoolean(
-            DashboardConstants.AUTO_COMPILED_KEY, false);
-    private static LoggedNetworkString loggedAutoDescription = new LoggedNetworkString(
-            DashboardConstants.AUTO_DESCRIPTION_KEY, "No Description");
+  private static LoggedNetworkBoolean autoCompiled =
+      new LoggedNetworkBoolean(DashboardConstants.AUTO_COMPILED_KEY, false);
+  private static LoggedNetworkString loggedAutoDescription =
+      new LoggedNetworkString(DashboardConstants.AUTO_DESCRIPTION_KEY, "No Description");
 
-    private Auto currentAuto;
-    private AutoBase compiledAuto;
+  private Auto currentAuto;
+  private AutoBase compiledAuto;
 
-    private static AutoFactory INSTANCE;
-    public static AutoFactory getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new AutoFactory();
-        }
+  private static AutoFactory INSTANCE;
 
-        return INSTANCE;
-    }
-    
-    private AutoFactory() {}
-
-    public boolean recompileNeeded() {
-        return autoSupplier.get() != currentAuto;
+  public static AutoFactory getInstance() {
+    if (INSTANCE == null) {
+      INSTANCE = new AutoFactory();
     }
 
-    public void recompile() {
-        autoCompiled.set(false);
-        currentAuto = autoSupplier.get();
-        if (currentAuto == null) {
-            currentAuto = Auto.NO_AUTO;
-        }
+    return INSTANCE;
+  }
 
-        compiledAuto = currentAuto.getInstance();
+  private AutoFactory() {}
 
-        if (compiledAuto != null) {
-            compiledAuto.init();
-        } else {
-            loggedAutoDescription.set("No Auto Selected");
-        }
+  public boolean recompileNeeded() {
+    return autoSupplier.get() != currentAuto;
+  }
 
-        autoCompiled.set(true);
+  public void recompile() {
+    autoCompiled.set(false);
+    currentAuto = autoSupplier.get();
+    if (currentAuto == null) {
+      currentAuto = Auto.NO_AUTO;
     }
 
-    public AutoBase getCompiledAuto() {
-        return compiledAuto;
+    compiledAuto = currentAuto.getInstance();
+
+    if (compiledAuto != null) {
+      compiledAuto.init();
+    } else {
+      loggedAutoDescription.set("No Auto Selected");
     }
 
-    public static enum Auto {
-        NO_AUTO(null),
-        SAUCE_AUTO(Sauce123Auto.class),
-        PPAUTO12387(NewPPAuto12387.class),
-        COMPILE_TEST(CompileTest.class);
+    autoCompiled.set(true);
+  }
 
-        private final Class<? extends AutoBase> autoClass;
+  public AutoBase getCompiledAuto() {
+    return compiledAuto;
+  }
 
-        private Auto(Class<? extends AutoBase> autoClass) {
-            this.autoClass = autoClass;
-        }
+  public static enum Auto {
+    NO_AUTO(null),
+    SAUCE_AUTO(Sauce123Auto.class),
+    PPAUTO12387(NewPPAuto12387.class),
+    COMPILE_TEST(CompileTest.class);
 
-        public AutoBase getInstance() {
-            if (autoClass != null) {
-                try {
+    private final Class<? extends AutoBase> autoClass;
 
-                    // AutoDescription autoDescription =
-                    // autoClass.getClass().getAnnotation(AutoDescription.class);
-                    //if (autoClass.isAnnotationPresent(AutoDescription.class)) {
-                    loggedAutoDescription.set(autoClass.getAnnotation(AutoDescription.class).description());
-                    // } else {
-                    //     loggedAutoDescription.set("No description");
-                    // }
-
-                    return autoClass.getConstructor().newInstance();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            return null;
-        }
+    private Auto(Class<? extends AutoBase> autoClass) {
+      this.autoClass = autoClass;
     }
+
+    public AutoBase getInstance() {
+      if (autoClass != null) {
+        try {
+
+          // AutoDescription autoDescription =
+          // autoClass.getClass().getAnnotation(AutoDescription.class);
+          // if (autoClass.isAnnotationPresent(AutoDescription.class)) {
+          loggedAutoDescription.set(autoClass.getAnnotation(AutoDescription.class).description());
+          // } else {
+          //     loggedAutoDescription.set("No description");
+          // }
+
+          return autoClass.getConstructor().newInstance();
+
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+
+      return null;
+    }
+  }
 }

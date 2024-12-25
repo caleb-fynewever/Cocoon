@@ -4,15 +4,13 @@
 
 package frc.robot.commands.drive;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class DefaultDriveCommand extends Command {
 
@@ -28,8 +26,8 @@ public class DefaultDriveCommand extends Command {
   private final SlewRateLimiter rotationLimiter;
 
   /**
-   * @param xSupplier        supplier for forward velocity.
-   * @param ySupplier        supplier for sideways velocity.
+   * @param xSupplier supplier for forward velocity.
+   * @param ySupplier supplier for sideways velocity.
    * @param rotationSupplier supplier for angular velocity.
    */
   public DefaultDriveCommand(
@@ -67,23 +65,31 @@ public class DefaultDriveCommand extends Command {
 
   protected SwerveRequest getSwerveRequest() {
     if (getFieldCentric()) {
-        SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-                .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
-                .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.05) // Add a 5% deadband
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-                .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-                .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-                .withRotationalRate(getRotation() * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond());
-        return drive;
+      SwerveRequest.FieldCentric drive =
+          new SwerveRequest.FieldCentric()
+              .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
+              .withRotationalDeadband(
+                  DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond()
+                      * 0.05) // Add a 5% deadband
+              .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+              .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
+              .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
+              .withRotationalRate(
+                  getRotation() * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond());
+      return drive;
     } else {
-        SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
-                .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
-                .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.05) // Add a 5% deadband
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-                .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-                .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-                .withRotationalRate(getRotation() * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond());
-        return drive;
+      SwerveRequest.RobotCentric drive =
+          new SwerveRequest.RobotCentric()
+              .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
+              .withRotationalDeadband(
+                  DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond()
+                      * 0.05) // Add a 5% deadband
+              .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+              .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
+              .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
+              .withRotationalRate(
+                  getRotation() * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond());
+      return drive;
     }
   }
 

@@ -2,6 +2,7 @@ plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2025.1.1-beta-3"
     id "com.peterabeles.gversion" version "1.10"
+    id 'com.diffplug.spotless' version '6.16.0'
 }
 
 java {
@@ -128,4 +129,19 @@ gversion {
     dateFormat   = "yyyy-MM-dd HH:mm:ss z"
     timeZone     = "America/New_York"
     indent       = "  "
+}
+
+project.compileJava.dependsOn(spotlessApply)
+spotless {
+    java {
+        target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        toggleOffOn()
+        googleJavaFormat()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }

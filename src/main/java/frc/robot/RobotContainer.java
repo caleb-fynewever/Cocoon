@@ -27,7 +27,8 @@ public class RobotContainer {
   public final DrivetrainSubsystem drivetrain = DrivetrainSubsystem.getInstance();
   public final VisionSubsystem vision = VisionSubsystem.getInstance();
 
-  private final Telemetry logger = new Telemetry(DrivetrainSubsystem.getMaxVelocityMetersPerSecond());
+  private final Telemetry logger =
+      new Telemetry(DrivetrainSubsystem.getMaxVelocityMetersPerSecond());
 
   public RobotContainer() {
 
@@ -48,28 +49,49 @@ public class RobotContainer {
 
     controlBoard.resetGyro().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
 
-    controlBoard.aimToGoal().whileTrue(new AimChassisToGoalCommand(controlBoard::getThrottle, controlBoard::getStrafe,
-        controlBoard::getRotation, dashboard::isFieldCentric));
+    controlBoard
+        .aimToGoal()
+        .whileTrue(
+            new AimChassisToGoalCommand(
+                controlBoard::getThrottle,
+                controlBoard::getStrafe,
+                controlBoard::getRotation,
+                dashboard::isFieldCentric));
 
     Rotation2d ampDirection = Rotation2d.fromDegrees(robotState.isRedAlliance() ? 90 : 270);
-    controlBoard.aimToAmp().whileTrue(new SnapToAngleCommand(ampDirection, controlBoard::getThrottle, controlBoard::getStrafe,
-            controlBoard::getRotation, dashboard::isFieldCentric));
+    controlBoard
+        .aimToAmp()
+        .whileTrue(
+            new SnapToAngleCommand(
+                ampDirection,
+                controlBoard::getThrottle,
+                controlBoard::getStrafe,
+                controlBoard::getRotation,
+                dashboard::isFieldCentric));
     /* POV Control */
-    // controlBoard.povUp().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(0), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard.povUp().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(0),
+    // controlBoard::getThrottle,controlBoard::getStrafe,
     // controlBoard::getRotation, dashboard::isFieldCentric));
-    // controlBoard.povUpRight().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(45), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard.povUpRight().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(45),
+    // controlBoard::getThrottle, controlBoard::getStrafe,
     // controlBoard::getRotation, dashboard::isFieldCentric));
-    // controlBoard.povRight().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(90), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard.povRight().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(90),
+    // controlBoard::getThrottle, controlBoard::getStrafe,
     // controlBoard::getRotation, dashboard::isFieldCentric));
-    // controlBoard.povDownRight().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(135), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard.povDownRight().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(135),
+    // controlBoard::getThrottle, controlBoard::getStrafe,
     // controlBoard::getRotation, dashboard::isFieldCentrice));
-    // controlBoard.povDown().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(180), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard.povDown().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(180),
+    // controlBoard::getThrottle, controlBoard::getStrafe,
     // controlBoard::getRotation, dashboard::isFieldCentric));
-    // controlBoard.povDownLeft().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(225), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard.povDownLeft().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(225),
+    // controlBoard::getThrottle, controlBoard::getStrafe,
     // controlBoard::getRotation, dashboard::isFieldCentric));
-    // controlBoard.povLeft().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(270), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard.povLeft().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(270),
+    // controlBoard::getThrottle, controlBoard::getStrafe,
     // controlBoard::getRotation, dashboard::isFieldCentric));
-    // controlBoard.povUpLeft().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(315), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard.povUpLeft().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(315),
+    // controlBoard::getThrottle, controlBoard::getStrafe,
     // controlBoard::getRotation, dashboard::isFieldCentric));
 
     /* Bindings for drivetrain characterization */

@@ -7,37 +7,38 @@ import frc.robot.subsystems.vision.io.VisionIO;
 import frc.robot.subsystems.vision.io.VisionIOHardware;
 
 public class VisionSubsystem extends SubsystemBase implements VisionIO {
-    private VisionIO vision;
-    private RobotState robotState = RobotState.getInstance();
+  private VisionIO vision;
+  private RobotState robotState = RobotState.getInstance();
 
-    private static VisionSubsystem INSTANCE;
-    public static VisionSubsystem getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new VisionSubsystem();
-        }
+  private static VisionSubsystem INSTANCE;
 
-        return INSTANCE;
-    }
-    
-    private VisionSubsystem() {
-        if(Robot.isSimulation()) {
-            //vision = new VisionIOSim(robotState);
-        } else { 
-            vision = new VisionIOHardware(robotState);
-        }
+  public static VisionSubsystem getInstance() {
+    if (INSTANCE == null) {
+      INSTANCE = new VisionSubsystem();
     }
 
-    @Override
-    public void periodic() {
-        synchronizedVisionUpdates.clear();
-        
-        update();
+    return INSTANCE;
+  }
 
-        synchronizedVisionUpdates.forEach(robotState::addVisionUpdate);
+  private VisionSubsystem() {
+    if (Robot.isSimulation()) {
+      // vision = new VisionIOSim(robotState);
+    } else {
+      vision = new VisionIOHardware(robotState);
     }
+  }
 
-    @Override
-    public void update() {
-        vision.update();
-    }
+  @Override
+  public void periodic() {
+    synchronizedVisionUpdates.clear();
+
+    update();
+
+    synchronizedVisionUpdates.forEach(robotState::addVisionUpdate);
+  }
+
+  @Override
+  public void update() {
+    vision.update();
+  }
 }

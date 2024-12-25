@@ -11,112 +11,116 @@ import frc.robot.controlboard.secondary.ISecondaryControlBoard;
 import frc.robot.util.Ports;
 
 public class ControlBoard implements IPrimaryControlBoard, ISecondaryControlBoard {
-    private final IPrimaryControlBoard primaryControlBoard;
-    private final ISecondaryControlBoard secondaryControlBoard;
+  private final IPrimaryControlBoard primaryControlBoard;
+  private final ISecondaryControlBoard secondaryControlBoard;
 
-    private static ControlBoard INSTANCE;
-    public static ControlBoard getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ControlBoard();
-        }
-        return INSTANCE;
+  private static ControlBoard INSTANCE;
+
+  public static ControlBoard getInstance() {
+    if (INSTANCE == null) {
+      INSTANCE = new ControlBoard();
     }
+    return INSTANCE;
+  }
 
-    private ControlBoard() {
-        boolean useDriveGamepad = DriverConstants.FORCE_GAMEPAD || DriverStation.getJoystickIsXbox(Ports.GAMEPAD_PORT);
-        primaryControlBoard = useDriveGamepad ? GamepadPrimaryInput.getInstance() : JoystickPrimaryInput.getInstance();
-        secondaryControlBoard = ControlPanelInput.getInstance();
+  private ControlBoard() {
+    boolean useDriveGamepad =
+        DriverConstants.FORCE_GAMEPAD || DriverStation.getJoystickIsXbox(Ports.GAMEPAD_PORT);
+    primaryControlBoard =
+        useDriveGamepad ? GamepadPrimaryInput.getInstance() : JoystickPrimaryInput.getInstance();
+    secondaryControlBoard = ControlPanelInput.getInstance();
 
-        if(!useDriveGamepad) {
-            IPrimaryControlBoard.povLooper.poll();
-        }
+    if (!useDriveGamepad) {
+      IPrimaryControlBoard.povLooper.poll();
     }
+  }
 
-    /* Primary */
+  /* Primary */
 
-    @Override
-    public double getThrottle() {
-        return primaryControlBoard.getThrottle();
-    }
+  @Override
+  public double getThrottle() {
+    return primaryControlBoard.getThrottle();
+  }
 
-    @Override
-    public double getStrafe() {
-        return primaryControlBoard.getStrafe();
-    }
+  @Override
+  public double getStrafe() {
+    return primaryControlBoard.getStrafe();
+  }
 
-    @Override
-    public double getRotation() {
-        return primaryControlBoard.getRotation();
-    }
-    @Override
-    public Trigger povUp() {
-        return primaryControlBoard.povUp();
-    }
+  @Override
+  public double getRotation() {
+    return primaryControlBoard.getRotation();
+  }
 
-    @Override
-    public Trigger povUpRight() {
-        return primaryControlBoard.povUpRight();
-    }
+  @Override
+  public Trigger povUp() {
+    return primaryControlBoard.povUp();
+  }
 
-    @Override
-    public Trigger povRight() {
-        return primaryControlBoard.povRight();
-    }
+  @Override
+  public Trigger povUpRight() {
+    return primaryControlBoard.povUpRight();
+  }
 
-    @Override
-    public Trigger povDownRight() {
-        return primaryControlBoard.povDownRight();
-    }
+  @Override
+  public Trigger povRight() {
+    return primaryControlBoard.povRight();
+  }
 
-    @Override
-    public Trigger povDown() {
-        return primaryControlBoard.povDown();
-    }
+  @Override
+  public Trigger povDownRight() {
+    return primaryControlBoard.povDownRight();
+  }
 
-    @Override
-    public Trigger povDownLeft() {
-        return primaryControlBoard.povDownLeft();
-    }
+  @Override
+  public Trigger povDown() {
+    return primaryControlBoard.povDown();
+  }
 
-    @Override
-    public Trigger povLeft() {
-        return primaryControlBoard.povLeft();
-    }
+  @Override
+  public Trigger povDownLeft() {
+    return primaryControlBoard.povDownLeft();
+  }
 
-    @Override
-    public Trigger povUpLeft() {
-        return primaryControlBoard.povUpLeft();
-    }
+  @Override
+  public Trigger povLeft() {
+    return primaryControlBoard.povLeft();
+  }
 
-    @Override
-    public Trigger resetGyro() {
-        return primaryControlBoard.resetGyro();
-    }
+  @Override
+  public Trigger povUpLeft() {
+    return primaryControlBoard.povUpLeft();
+  }
 
-    @Override
-    public Trigger aimToGoal() {
-        return primaryControlBoard.aimToGoal();
-    }
+  @Override
+  public Trigger resetGyro() {
+    return primaryControlBoard.resetGyro();
+  }
 
-    @Override
-    public Trigger aimToAmp() {
-        return primaryControlBoard.aimToAmp();
-    }
+  @Override
+  public Trigger aimToGoal() {
+    return primaryControlBoard.aimToGoal();
+  }
 
-    @Override
-    public Trigger intake() {
-        return primaryControlBoard.intake();
-    }
+  @Override
+  public Trigger aimToAmp() {
+    return primaryControlBoard.aimToAmp();
+  }
 
-    @Override
-    public Trigger shoot() {
-        return primaryControlBoard.shoot();
-    }
+  @Override
+  public Trigger intake() {
+    return primaryControlBoard.intake();
+  }
 
-    /* Secondary */
+  @Override
+  public Trigger shoot() {
+    return primaryControlBoard.shoot();
+  }
 
-    @Override
-    public Trigger climb() {
-        return secondaryControlBoard.climb();
-    }
+  /* Secondary */
+
+  @Override
+  public Trigger climb() {
+    return secondaryControlBoard.climb();
+  }
 }
