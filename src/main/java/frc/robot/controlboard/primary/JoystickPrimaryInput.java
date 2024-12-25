@@ -9,17 +9,16 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.util.Ports;
 
 public class JoystickPrimaryInput implements IPrimaryControlBoard {
-    private static JoystickPrimaryInput INSTANCE = null;
+    private final Joystick translateStick;
+    private final Joystick rotateStick;
 
+    private static JoystickPrimaryInput INSTANCE;
     public static JoystickPrimaryInput getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new JoystickPrimaryInput();
         }
         return INSTANCE;
     }
-    
-    private final Joystick translateStick;
-    private final Joystick rotateStick;
     
     private JoystickPrimaryInput() {
         translateStick = new Joystick(Ports.TRANSLATION_JOYSTICK_PORT);

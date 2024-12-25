@@ -7,7 +7,6 @@ package frc.robot.auto.modes.testAutos;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import frc.robot.auto.common.AutoDescription;
-import frc.robot.auto.common.AutoRequirements;
 import frc.robot.auto.modes.AutoBase;
 
 @AutoDescription(description = "Center to close 3 pickup, amp side 8 + 7")
@@ -20,8 +19,8 @@ public class NewPPAuto12387 extends AutoBase {
     private final static PathPlannerPath pickUpPathASto7 = getPathFromFile("PiP-AS-7");
     private final static PathPlannerPath scorePath7ToAS = getPathFromFile("ScP 7-AS");
 
-    public NewPPAuto12387(AutoRequirements autoRequirements) {
-        super(startPathCenterTo1.getStartingHolonomicPose(), autoRequirements);
+    public NewPPAuto12387() {
+        super(startPathCenterTo1.getStartingHolonomicPose());
     }
 
     @Override

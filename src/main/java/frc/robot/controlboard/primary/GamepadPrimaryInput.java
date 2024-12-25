@@ -8,16 +8,15 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.util.Ports;
 
 public class GamepadPrimaryInput implements IPrimaryControlBoard{
-    
-    private static GamepadPrimaryInput INSTANCE = null;
+    private final CommandXboxController controller;
 
+    private static GamepadPrimaryInput INSTANCE;
     public static GamepadPrimaryInput getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new GamepadPrimaryInput();
         }
         return INSTANCE;
     }
-    private final CommandXboxController controller;
 
     private GamepadPrimaryInput() {
         controller = new CommandXboxController(Ports.GAMEPAD_PORT);

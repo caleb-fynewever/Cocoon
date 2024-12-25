@@ -11,17 +11,16 @@ import frc.robot.controlboard.secondary.ISecondaryControlBoard;
 import frc.robot.util.Ports;
 
 public class ControlBoard implements IPrimaryControlBoard, ISecondaryControlBoard {
-    private static ControlBoard INSTANCE = null;
+    private final IPrimaryControlBoard primaryControlBoard;
+    private final ISecondaryControlBoard secondaryControlBoard;
 
+    private static ControlBoard INSTANCE;
     public static ControlBoard getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new ControlBoard();
         }
         return INSTANCE;
     }
-
-    private final IPrimaryControlBoard primaryControlBoard;
-    private final ISecondaryControlBoard secondaryControlBoard;
 
     private ControlBoard() {
         boolean useDriveGamepad = DriverConstants.FORCE_GAMEPAD || DriverStation.getJoystickIsXbox(Ports.GAMEPAD_PORT);

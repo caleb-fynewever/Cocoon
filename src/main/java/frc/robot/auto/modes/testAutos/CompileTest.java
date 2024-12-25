@@ -9,7 +9,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.auto.common.AutoDescription;
-import frc.robot.auto.common.AutoRequirements;
 import frc.robot.auto.modes.AutoBase;
 
 @AutoDescription(description = "Compile/recompile test")
@@ -17,8 +16,8 @@ public class CompileTest extends AutoBase{
 
     private final static PathPlannerPath startPathCenterTo1 = getPathFromFile("StP-CS-1");
     
-    public CompileTest(AutoRequirements autoRequirements){
-        super(startPathCenterTo1.getStartingHolonomicPose(),  autoRequirements);
+    public CompileTest(){
+        super(startPathCenterTo1.getStartingHolonomicPose());
     }
 
     @Override

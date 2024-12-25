@@ -10,7 +10,7 @@ public class VisionSubsystem extends SubsystemBase implements VisionIO {
     private VisionIO vision;
     private RobotState robotState = RobotState.getInstance();
 
-    public static VisionSubsystem INSTANCE;
+    private static VisionSubsystem INSTANCE;
     public static VisionSubsystem getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new VisionSubsystem();
@@ -18,6 +18,7 @@ public class VisionSubsystem extends SubsystemBase implements VisionIO {
 
         return INSTANCE;
     }
+    
     private VisionSubsystem() {
         if(Robot.isSimulation()) {
             //vision = new VisionIOSim(robotState);

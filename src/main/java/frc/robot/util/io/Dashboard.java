@@ -9,10 +9,18 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class Dashboard {
     private final LoggedDashboardChooser<DriveMode> driveModeChooser = new LoggedDashboardChooser<>("Drive Mode");
-
     private final LoggedDashboardChooser<Auto> autoChooser = new LoggedDashboardChooser<>("Auto Routine");
 
-    public Dashboard() {
+    private static Dashboard INSTANCE;
+    public static Dashboard getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Dashboard();
+        }
+
+        return INSTANCE;
+    }
+
+    private Dashboard() {
         driveModeChooser.addDefaultOption(DriveMode.FIELD_CENTRIC.name(), DriveMode.FIELD_CENTRIC);
         driveModeChooser.addOption(DriveMode.FIELD_CENTRIC.name(), DriveMode.FIELD_CENTRIC);
         driveModeChooser.addOption(DriveMode.ROBOT_CENTRIC.name(), DriveMode.ROBOT_CENTRIC);

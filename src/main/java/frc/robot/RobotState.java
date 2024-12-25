@@ -23,8 +23,7 @@ public class RobotState {
         return INSTANCE;
     }
 
-    private RobotState() {
-    }
+    private RobotState() {}
 
     public Pose2d getFieldToRobot() {
         if(drivetrainState.Pose != null) {

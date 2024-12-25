@@ -14,13 +14,10 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.RobotState;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
 
 public class SnapToAngleCommand extends DefaultDriveCommand {
-  private final RobotState robotState;
-
   private SwerveRequest.FieldCentricFacingAngle drive;
 
   private Rotation2d desiredDirection;
@@ -30,11 +27,8 @@ public class SnapToAngleCommand extends DefaultDriveCommand {
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier rotationSupplier,
-      BooleanSupplier fieldCentricSupplier,
-      DrivetrainSubsystem drivetrain,
-      RobotState robotState) {
-    super(xSupplier, ySupplier, rotationSupplier, fieldCentricSupplier, drivetrain);
-    this.robotState = robotState;
+      BooleanSupplier fieldCentricSupplier) {
+    super(xSupplier, ySupplier, rotationSupplier, fieldCentricSupplier);
     this.desiredDirection = desiredDirection;
 
     drive = new SwerveRequest.FieldCentricFacingAngle()

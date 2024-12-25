@@ -16,7 +16,7 @@ import frc.robot.subsystems.drive.DrivetrainSubsystem;
 
 public class DefaultDriveCommand extends Command {
 
-  private final DrivetrainSubsystem drivetrain;
+  private final DrivetrainSubsystem drivetrain = DrivetrainSubsystem.getInstance();
 
   private final DoubleSupplier xSupplier;
   private final DoubleSupplier ySupplier;
@@ -36,13 +36,11 @@ public class DefaultDriveCommand extends Command {
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier rotationSupplier,
-      BooleanSupplier fieldCentricSupplier,
-      DrivetrainSubsystem drivetrain) {
+      BooleanSupplier fieldCentricSupplier) {
     this.xSupplier = xSupplier;
     this.ySupplier = ySupplier;
     this.rotationSupplier = rotationSupplier;
     this.fieldCentricSupplier = fieldCentricSupplier;
-    this.drivetrain = drivetrain;
 
     xLimiter = new SlewRateLimiter(2);
     yLimiter = new SlewRateLimiter(2);

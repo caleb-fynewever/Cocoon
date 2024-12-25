@@ -32,7 +32,7 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
 
     private RobotState robotState = RobotState.getInstance();
 
-    public static DrivetrainSubsystem INSTANCE;
+    private static DrivetrainSubsystem INSTANCE;
     public static DrivetrainSubsystem getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new DrivetrainSubsystem();
@@ -40,6 +40,7 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
 
         return INSTANCE;
     }
+    
     private DrivetrainSubsystem() {
         super(DrivetrainConstants.TUNER_DRIVETRAIN_CONSTANTS, DrivetrainConstants.TUNER_MODULE_CONSTANTS);
         configurePathPlanner();

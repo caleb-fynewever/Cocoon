@@ -14,14 +14,14 @@ import frc.robot.auto.modes.AutoBase;
 import frc.robot.auto.modes.testAutos.CompileTest;
 import frc.robot.auto.modes.testAutos.NewPPAuto12387;
 import frc.robot.auto.modes.testAutos.Sauce123Auto;
+import frc.robot.util.io.Dashboard;
 
 /**
  * Responsible for selecting, compiling, and recompiling autos before the start
  * of a match.
  */
 public class AutoFactory {
-    private final Supplier<Auto> autoSupplier;
-    private final AutoRequirements autoRequirements;
+    private final Supplier<Auto> autoSupplier = () -> Dashboard.getInstance().getAuto();
 
     private static LoggedNetworkBoolean autoCompiled = new LoggedNetworkBoolean(
             DashboardConstants.AUTO_COMPILED_KEY, false);
@@ -31,12 +31,16 @@ public class AutoFactory {
     private Auto currentAuto;
     private AutoBase compiledAuto;
 
-    public AutoFactory(
-            Supplier<Auto> autoSupplier,
-            AutoRequirements autoRequirements) {
-        this.autoSupplier = autoSupplier;
-        this.autoRequirements = autoRequirements;
+    private static AutoFactory INSTANCE;
+    public static AutoFactory getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new AutoFactory();
+        }
+
+        return INSTANCE;
     }
+    
+    private AutoFactory() {}
 
     public boolean recompileNeeded() {
         return autoSupplier.get() != currentAuto;
@@ -49,7 +53,7 @@ public class AutoFactory {
             currentAuto = Auto.NO_AUTO;
         }
 
-        compiledAuto = currentAuto.getInstance(autoRequirements);
+        compiledAuto = currentAuto.getInstance();
 
         if (compiledAuto != null) {
             compiledAuto.init();
@@ -76,7 +80,7 @@ public class AutoFactory {
             this.autoClass = autoClass;
         }
 
-        public AutoBase getInstance(AutoRequirements autoRequirements) {
+        public AutoBase getInstance() {
             if (autoClass != null) {
                 try {
 
@@ -88,7 +92,7 @@ public class AutoFactory {
                     //     loggedAutoDescription.set("No description");
                     // }
 
-                    return autoClass.getConstructor(AutoRequirements.class).newInstance(autoRequirements);
+                    return autoClass.getConstructor().newInstance();
 
                 } catch (Exception e) {
                     e.printStackTrace();

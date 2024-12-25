@@ -17,7 +17,7 @@ import frc.robot.subsystems.drive.DrivetrainSubsystem;
 import frc.robot.util.AimingCalculator;
 
 public class AimChassisToGoalCommand extends DefaultDriveCommand {
-    private final RobotState robotState;
+    private final RobotState robotState = RobotState.getInstance();
 
     private SwerveRequest.FieldCentricFacingAngle drive = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
@@ -32,11 +32,8 @@ public class AimChassisToGoalCommand extends DefaultDriveCommand {
             DoubleSupplier xSupplier,
             DoubleSupplier ySupplier,
             DoubleSupplier rotationSupplier,
-            BooleanSupplier fieldCentricSupplier,
-            DrivetrainSubsystem drivetrain,
-            RobotState robotState) {
-        super(xSupplier, ySupplier, rotationSupplier, fieldCentricSupplier, drivetrain);
-        this.robotState = robotState;
+            BooleanSupplier fieldCentricSupplier) {
+        super(xSupplier, ySupplier, rotationSupplier, fieldCentricSupplier);
 
         drive.HeadingController.setPID(3.5, 0, 0);
         drive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);

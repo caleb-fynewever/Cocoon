@@ -13,16 +13,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.auto.common.AutoRequirements;
+import frc.robot.RobotState;
+import frc.robot.subsystems.drive.DrivetrainSubsystem;
 
 public abstract class AutoBase extends SequentialCommandGroup {
-    protected final AutoRequirements autoRequirements;
+    private final RobotState robotState = RobotState.getInstance();
+    private final DrivetrainSubsystem drivetrain = DrivetrainSubsystem.getInstance();
     private Pose2d startingPose;
 
-    protected AutoBase(
-            Optional<Pose2d> pathStartingPose,
-            AutoRequirements autoRequirements) {
-        this.autoRequirements = autoRequirements;
+    protected AutoBase(Optional<Pose2d> pathStartingPose) {
 
         if(pathStartingPose.isEmpty()) {
             startingPose = new Pose2d();
@@ -30,18 +29,18 @@ public abstract class AutoBase extends SequentialCommandGroup {
             startingPose = pathStartingPose.get();
         }
 
-        if (autoRequirements.getRobotState().isRedAlliance()) {
+        if (RobotState.getInstance().isRedAlliance()) {
             startingPose = FlippingUtil.flipFieldPose(startingPose);
         }
         setStartingPose(startingPose);
-        Logger.recordOutput("Red Alliance", this.autoRequirements.getRobotState().isRedAlliance());
+        Logger.recordOutput("Red Alliance", this.robotState.isRedAlliance());
         Logger.recordOutput("Auto Starting Pose", startingPose);
     }
 
     public abstract void init();
 
     private void setStartingPose(Pose2d pathStartingPose) {
-        addCommands(new InstantCommand(() -> autoRequirements.getDrivetrain().resetPose(pathStartingPose)));
+        addCommands(new InstantCommand(() -> drivetrain.resetPose(pathStartingPose)));
     }
 
     protected Command createFollowPathCommand(PathPlannerPath path) {
