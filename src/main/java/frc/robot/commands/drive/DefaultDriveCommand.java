@@ -7,9 +7,8 @@ package frc.robot.commands.drive;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.ApplyChassisSpeeds;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -97,7 +96,7 @@ public class DefaultDriveCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    drivetrain.setControl(new ApplyChassisSpeeds());
+    drivetrain.stop();
   }
 
   protected double slewAxis(SlewRateLimiter limiter, double value) {

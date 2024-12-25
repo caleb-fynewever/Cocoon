@@ -7,7 +7,6 @@ package frc.robot.auto.modes.testAutos;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.auto.common.AutoDescription;
 import frc.robot.auto.common.AutoRequirements;
@@ -16,10 +15,10 @@ import frc.robot.auto.modes.AutoBase;
 @AutoDescription(description = "Compile/recompile test")
 public class CompileTest extends AutoBase{
 
-    private final static PathPlannerPath startPathCenterTo1 = PathPlannerPath.fromPathFile("StP-CS-1");
+    private final static PathPlannerPath startPathCenterTo1 = getPathFromFile("StP-CS-1");
     
     public CompileTest(AutoRequirements autoRequirements){
-        super(new Pose2d(),  autoRequirements);
+        super(startPathCenterTo1.getStartingHolonomicPose(),  autoRequirements);
     }
 
     @Override

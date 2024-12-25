@@ -12,16 +12,16 @@ import frc.robot.auto.modes.AutoBase;
 
 @AutoDescription(description = "Center to close 3 pickup, amp side 8 + 7")
 public class NewPPAuto12387 extends AutoBase {
-    private final static PathPlannerPath startPathCenterTo1 = PathPlannerPath.fromPathFile("StP-CS-1");
-    private final static PathPlannerPath pickUpPathS1To2 = PathPlannerPath.fromPathFile("PiPS1-2");
-    private final static PathPlannerPath pickUpPathS2To3 = PathPlannerPath.fromPathFile("PipS-2-3");
-    private final static PathPlannerPath pickUpPathS3To8 = PathPlannerPath.fromPathFile("PiPS-3-8");
-    private final static PathPlannerPath scorePath8toAS = PathPlannerPath.fromPathFile("ScP-8-AS");
-    private final static PathPlannerPath pickUpPathASto7 = PathPlannerPath.fromPathFile("PiP-AS-7");
-    private final static PathPlannerPath scorePath7ToAS = PathPlannerPath.fromPathFile("ScP 7-AS");
+    private final static PathPlannerPath startPathCenterTo1 = getPathFromFile("StP-CS-1");
+    private final static PathPlannerPath pickUpPathS1To2 = getPathFromFile("PiPS1-2");
+    private final static PathPlannerPath pickUpPathS2To3 = getPathFromFile("PipS-2-3");
+    private final static PathPlannerPath pickUpPathS3To8 = getPathFromFile("PiPS-3-8");
+    private final static PathPlannerPath scorePath8toAS = getPathFromFile("ScP-8-AS");
+    private final static PathPlannerPath pickUpPathASto7 = getPathFromFile("PiP-AS-7");
+    private final static PathPlannerPath scorePath7ToAS = getPathFromFile("ScP 7-AS");
 
     public NewPPAuto12387(AutoRequirements autoRequirements) {
-        super(startPathCenterTo1.getPreviewStartingHolonomicPose(), autoRequirements);
+        super(startPathCenterTo1.getStartingHolonomicPose(), autoRequirements);
     }
 
     @Override

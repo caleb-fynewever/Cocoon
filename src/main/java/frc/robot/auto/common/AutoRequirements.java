@@ -9,16 +9,10 @@ import frc.robot.subsystems.drive.DrivetrainSubsystem;
 
 /** Add your docs here. */
 public class AutoRequirements {
-    private final RobotState robotState;
-    private final DrivetrainSubsystem drivetrain;
+    private final RobotState robotState = RobotState.getInstance();
+    private final DrivetrainSubsystem drivetrain = DrivetrainSubsystem.getInstance();
 
-    public AutoRequirements(
-        RobotState robotState,
-        DrivetrainSubsystem drivetrain
-    ) {
-        this.robotState = robotState;
-        this.drivetrain = drivetrain;
-    }
+    public AutoRequirements() {}
 
     public RobotState getRobotState() {
         return robotState;

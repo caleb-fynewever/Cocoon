@@ -6,8 +6,8 @@ package frc.robot.auto.common;
 
 import java.util.function.Supplier;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean;
-import org.littletonrobotics.junction.networktables.LoggedDashboardString;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
+import org.littletonrobotics.junction.networktables.LoggedNetworkString;
 
 import frc.robot.Constants.DashboardConstants;
 import frc.robot.auto.modes.AutoBase;
@@ -23,9 +23,9 @@ public class AutoFactory {
     private final Supplier<Auto> autoSupplier;
     private final AutoRequirements autoRequirements;
 
-    private static LoggedDashboardBoolean autoCompiled = new LoggedDashboardBoolean(
+    private static LoggedNetworkBoolean autoCompiled = new LoggedNetworkBoolean(
             DashboardConstants.AUTO_COMPILED_KEY, false);
-    private static LoggedDashboardString loggedAutoDescription = new LoggedDashboardString(
+    private static LoggedNetworkString loggedAutoDescription = new LoggedNetworkString(
             DashboardConstants.AUTO_DESCRIPTION_KEY, "No Description");
 
     private Auto currentAuto;

@@ -5,16 +5,22 @@ import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.subsystems.vision.io.VisionIO;
 import frc.robot.subsystems.vision.io.VisionIOHardware;
-import frc.robot.subsystems.vision.io.VisionIOSim;
 
 public class VisionSubsystem extends SubsystemBase implements VisionIO {
     private VisionIO vision;
-    private RobotState robotState;
+    private RobotState robotState = RobotState.getInstance();
 
-    public VisionSubsystem(RobotState robotState) {
-        this.robotState = robotState;
+    public static VisionSubsystem INSTANCE;
+    public static VisionSubsystem getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new VisionSubsystem();
+        }
+
+        return INSTANCE;
+    }
+    private VisionSubsystem() {
         if(Robot.isSimulation()) {
-            vision = new VisionIOSim(robotState);
+            //vision = new VisionIOSim(robotState);
         } else { 
             vision = new VisionIOHardware(robotState);
         }

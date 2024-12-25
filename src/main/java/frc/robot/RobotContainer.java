@@ -4,12 +4,9 @@
 
 package frc.robot;
 
-import java.util.function.Consumer;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.auto.common.AutoFactory;
 import frc.robot.auto.common.AutoRequirements;
 import frc.robot.commands.drive.AimChassisToGoalCommand;
@@ -18,7 +15,6 @@ import frc.robot.commands.drive.SnapToAngleCommand;
 import frc.robot.controlboard.ControlBoard;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.subsystems.vision.VisionUpdate;
 import frc.robot.util.Telemetry;
 import frc.robot.util.io.Dashboard;
 
@@ -28,32 +24,18 @@ public class RobotContainer {
 
   public final Dashboard dashboard;
 
-  public final DrivetrainSubsystem drivetrain;
-  public final VisionSubsystem vision;
+  public final RobotState robotState = RobotState.getInstance();
+  public final DrivetrainSubsystem drivetrain = DrivetrainSubsystem.getInstance();
+  public final VisionSubsystem vision = VisionSubsystem.getInstance();
 
   public final AutoFactory autoFactory;
 
-  private final Consumer<VisionUpdate> visionEstimateConsumer = new Consumer<VisionUpdate>() {
-    @Override
-    public void accept(VisionUpdate estimate) {
-      drivetrain.addVisionMeasurement(estimate);
-    }
-  };
-
-  public final RobotState robotState = new RobotState(visionEstimateConsumer);
 
   private final Telemetry logger = new Telemetry(DrivetrainSubsystem.getMaxVelocityMetersPerSecond());
 
   public RobotContainer() {
 
     dashboard = new Dashboard();
-
-    drivetrain = new DrivetrainSubsystem(
-        robotState,
-        DrivetrainConstants.TUNER_DRIVETRAIN_CONSTANTS,
-        DrivetrainConstants.TUNER_MODULE_CONSTANTS);
-    
-    vision = new VisionSubsystem(robotState);
 
     drivetrain.setDefaultCommand(
         new DefaultDriveCommand(
@@ -67,9 +49,7 @@ public class RobotContainer {
 
     autoFactory = new AutoFactory(
         () -> dashboard.getAuto(),
-        new AutoRequirements(
-            robotState,
-            drivetrain));
+        new AutoRequirements());
 
     configureBindings();
   }
@@ -77,7 +57,7 @@ public class RobotContainer {
   private void configureBindings() {
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    controlBoard.resetGyro().onTrue(new InstantCommand(() -> drivetrain.seedFieldRelative()));
+    controlBoard.resetGyro().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
 
     controlBoard.aimToGoal().whileTrue(new AimChassisToGoalCommand(controlBoard::getThrottle, controlBoard::getStrafe,
         controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
@@ -86,22 +66,22 @@ public class RobotContainer {
     controlBoard.aimToAmp().whileTrue(new SnapToAngleCommand(ampDirection, controlBoard::getThrottle, controlBoard::getStrafe,
             controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
     /* POV Control */
-    controlBoard.povUp().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(0), controlBoard::getThrottle, controlBoard::getStrafe,
-    controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
-    controlBoard.povUpRight().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(45), controlBoard::getThrottle, controlBoard::getStrafe,
-    controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
-    controlBoard.povRight().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(90), controlBoard::getThrottle, controlBoard::getStrafe,
-    controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
-    controlBoard.povDownRight().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(135), controlBoard::getThrottle, controlBoard::getStrafe,
-    controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
-    controlBoard.povDown().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(180), controlBoard::getThrottle, controlBoard::getStrafe,
-    controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
-    controlBoard.povDownLeft().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(225), controlBoard::getThrottle, controlBoard::getStrafe,
-    controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
-    controlBoard.povLeft().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(270), controlBoard::getThrottle, controlBoard::getStrafe,
-    controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
-    controlBoard.povUpLeft().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(315), controlBoard::getThrottle, controlBoard::getStrafe,
-    controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
+    // controlBoard.povUp().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(0), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
+    // controlBoard.povUpRight().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(45), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
+    // controlBoard.povRight().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(90), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
+    // controlBoard.povDownRight().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(135), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
+    // controlBoard.povDown().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(180), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
+    // controlBoard.povDownLeft().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(225), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
+    // controlBoard.povLeft().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(270), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
+    // controlBoard.povUpLeft().whileTrue(new SnapToAngleCommand(Rotation2d.fromDegrees(315), controlBoard::getThrottle, controlBoard::getStrafe,
+    // controlBoard::getRotation, dashboard::isFieldCentric, drivetrain, robotState));
 
     /* Bindings for drivetrain characterization */
     /*

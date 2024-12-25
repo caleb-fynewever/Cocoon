@@ -1,14 +1,17 @@
 package frc.robot.subsystems.drive;
 
-import java.util.function.Supplier;
 import java.util.Optional;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.PathPlannerConstants;
@@ -25,16 +28,21 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
     /* Keep track if we've ever applied the driver perspective before or not */
     private boolean hasAppliedOperatorPerspective = false;
 
-    private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
+    private final SwerveRequest.ApplyRobotSpeeds AutoRequest = new SwerveRequest.ApplyRobotSpeeds();
 
-    private RobotState robotState;
+    private RobotState robotState = RobotState.getInstance();
 
-    public DrivetrainSubsystem(RobotState robotState, SwerveDrivetrainConstants drivetrainConstants,
-            SwerveModuleConstants... modules) {
-        super(drivetrainConstants, modules);
+    public static DrivetrainSubsystem INSTANCE;
+    public static DrivetrainSubsystem getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new DrivetrainSubsystem();
+        }
+
+        return INSTANCE;
+    }
+    private DrivetrainSubsystem() {
+        super(DrivetrainConstants.TUNER_DRIVETRAIN_CONSTANTS, DrivetrainConstants.TUNER_MODULE_CONSTANTS);
         configurePathPlanner();
-
-        this.robotState = robotState;
 
         if (Robot.isSimulation()) {
             startSimThread();
@@ -44,29 +52,34 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
     private void configurePathPlanner() {
         double driveBaseRadius = 0;
 
-        for (var moduleLocation : m_moduleLocations) {
+        for (var moduleLocation : getModuleLocations()) {
             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
         }
 
-        AutoBuilder.configureHolonomic(
+        AutoBuilder.configure(
                 () -> this.getState().Pose, // Supplier of current robot pose
-                this::seedFieldRelative, // Consumer for seeding pose against auto
+                this::resetPose, // Consumer for seeding pose against auto
                 this::getCurrentRobotChassisSpeeds,
-                (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
-                PathPlannerConstants.HOLONOMIC_PATH_FOLLOWER_CONFIG,
-                //path will be mirrored for the red alliance
-                // This will flip the path being followed to the red side of the field.
-                // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-                () -> DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().equals(Optional.of(Alliance.Red)),
+                (speeds, feedforwards) -> this.setControl(AutoRequest.withSpeeds(speeds)
+                        .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
+                        .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())), 
+                PathPlannerConstants.PATH_FOLLOWING_CONTROLLER,
+                PathPlannerConstants.ROBOT_CONFIG,
+                () -> DriverStation.getAlliance().isPresent()
+                        && DriverStation.getAlliance().equals(Optional.of(Alliance.Red)),
                 this); // Subsystem for requirements
     }
 
-    public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
-        return run(() -> this.setControl(requestSupplier.get()));
+    // public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
+    //     return run(() -> this.setControl(requestSupplier.get()));
+    // }
+
+    public void stop() {
+        setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds()));
     }
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
-        return m_kinematics.toChassisSpeeds(getState().ModuleStates);
+        return getKinematics().toChassisSpeeds(getState().ModuleStates);
     }
 
     public void addVisionMeasurement(VisionUpdate visionUpdate) {
@@ -84,8 +97,14 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
     @Override
     public void periodic() {
         /* Periodically try to apply the operator perspective */
-        /* If we haven't applied the operator perspective before, then we should apply it regardless of DS state */
-        /* This allows us to correct the perspective in case the robot code restarts mid-match */
+        /*
+         * If we haven't applied the operator perspective before, then we should apply
+         * it regardless of DS state
+         */
+        /*
+         * This allows us to correct the perspective in case the robot code restarts
+         * mid-match
+         */
         if (!hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent((allianceColor) -> {
                 this.setOperatorPerspectiveForward(

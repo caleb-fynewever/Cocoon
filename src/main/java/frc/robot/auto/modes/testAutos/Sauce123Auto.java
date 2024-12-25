@@ -12,12 +12,12 @@ import frc.robot.auto.modes.AutoBase;
 
 @AutoDescription(description = "saucy 123 like a bbq on july fourth")
 public class Sauce123Auto extends AutoBase{
-    private final static PathPlannerPath startPathCenterTo1 = PathPlannerPath.fromPathFile("Path-C-1");
-    private final static PathPlannerPath path1To2 = PathPlannerPath.fromPathFile("Path-1-2");
-    private final static PathPlannerPath path2To3 = PathPlannerPath.fromPathFile("Path-2-3");
+    private final static PathPlannerPath startPathCenterTo1 = getPathFromFile("Path-C-1");
+    private final static PathPlannerPath path1To2 = getPathFromFile("Path-1-2");
+    private final static PathPlannerPath path2To3 = getPathFromFile("Path-2-3");
     
     public Sauce123Auto(AutoRequirements autoRequirements){
-        super(startPathCenterTo1.getPreviewStartingHolonomicPose(), autoRequirements);
+        super(startPathCenterTo1.getStartingHolonomicPose(), autoRequirements);
     }
 
     @Override

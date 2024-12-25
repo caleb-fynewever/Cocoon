@@ -1,24 +1,29 @@
 package frc.robot;
 
-import java.util.function.Consumer;
-
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.team2052.lib.MathHelpers;
 
-import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.subsystems.drive.DrivetrainSubsystem;
 import frc.robot.subsystems.vision.VisionUpdate;
 
 public class RobotState {
     private SwerveDriveState drivetrainState = new SwerveDriveState();
-    
-    private final Consumer<VisionUpdate> visionUpdateConsumer;
 
-    public RobotState(Consumer<VisionUpdate> visionUpdateConsumer) {
-        this.visionUpdateConsumer = visionUpdateConsumer;
+    private static RobotState INSTANCE;
+    public static RobotState getInstance() {
+        if(INSTANCE == null) {
+            INSTANCE = new RobotState();
+        } 
+        
+        return INSTANCE;
+    }
+
+    private RobotState() {
     }
 
     public Pose2d getFieldToRobot() {
@@ -43,7 +48,7 @@ public class RobotState {
     }
 
     public void addVisionUpdate(VisionUpdate visionUpdate) {
-        visionUpdateConsumer.accept(visionUpdate);
+        DrivetrainSubsystem.getInstance().addVisionMeasurement(visionUpdate);
     }
     
     /**

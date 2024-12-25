@@ -1,7 +1,7 @@
 package frc.robot.subsystems.drive.ctre;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
+import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 
 /**
  * This is a simple container for holding CTRE drive creation constants. 

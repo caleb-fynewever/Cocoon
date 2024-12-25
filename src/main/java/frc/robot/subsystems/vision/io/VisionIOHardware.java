@@ -3,13 +3,12 @@ package frc.robot.subsystems.vision.io;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 import java.util.Collections;
+import java.util.List;
 
 import frc.robot.Constants.VisionConstants.Camera0Constants;
-import frc.robot.Constants.VisionConstants.Camera1Constants;
-import frc.robot.Constants.VisionConstants.Camera2Constants;
-import frc.robot.Constants.VisionConstants.Camera3Constants;
 import frc.robot.subsystems.vision.TagTracker;
 import frc.robot.subsystems.vision.VisionUpdate;
 import frc.robot.RobotState;
@@ -18,10 +17,7 @@ public class VisionIOHardware implements VisionIO {
     public VisionIOHardware(RobotState robotState) {
         Collections.addAll(
                 cameras,
-                new TagTracker(Camera0Constants.TagTrackerConstants(), robotState),
-                new TagTracker(Camera1Constants.TagTrackerConstants(), robotState),
-                new TagTracker(Camera2Constants.TagTrackerConstants(), robotState),
-                new TagTracker(Camera3Constants.TagTrackerConstants(), robotState));
+                new TagTracker(Camera0Constants.TagTrackerConstants(), robotState));
     }
 
     public void update() {
@@ -29,13 +25,17 @@ public class VisionIOHardware implements VisionIO {
     }
 
     public void pullCameraData(TagTracker tagTracker) {
-        Optional<VisionUpdate> visionUpdate = tagTracker.getVisionUpdate();
+        List<PhotonPipelineResult> latestResults = tagTracker.photonCamera.getAllUnreadResults();
+        for(int i = 0; i < latestResults.size(); i++) {
+            Optional<VisionUpdate> visionUpdate = tagTracker.getResultToPose(latestResults.get(i));
 
-        if (visionUpdate.isPresent()) {
-            synchronizedVisionUpdates.add(visionUpdate.get());
-            Logger.recordOutput(tagTracker.getName() + " has update", true);
-        } else {
-            Logger.recordOutput(tagTracker.getName() + " has update", false);
+            if (visionUpdate.isPresent()) {
+                synchronizedVisionUpdates.add(visionUpdate.get());
+                Logger.recordOutput(tagTracker.getName() + " has update", true);
+            } else {
+                Logger.recordOutput(tagTracker.getName() + " has update", false);
+            }
         }
+
     }
 }
