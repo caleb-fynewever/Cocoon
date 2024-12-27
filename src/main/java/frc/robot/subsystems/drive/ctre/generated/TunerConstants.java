@@ -24,7 +24,13 @@ public class TunerConstants {
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
   private static final Slot0Configs driveGains =
-      new Slot0Configs().withKP(3).withKI(0).withKD(0).withKS(0).withKV(0).withKA(0);
+      new Slot0Configs()
+          .withKP(0.35)
+          .withKI(0)
+          .withKD(0.0)
+          .withKS(0)
+          .withKV(12.0 / 88.2142857143)
+          .withKA(0);
 
   // The closed-loop output type to use for the steer motors;
   // This affects the PID/FF gains for the steer motors
@@ -35,7 +41,7 @@ public class TunerConstants {
 
   // The stator current at which the wheels start to slip;
   // This needs to be tuned to your individual robot
-  private static final double kSlipCurrentA = 150.0;
+  private static final double kSlipCurrentA = 80.0;
 
   private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration();
 
@@ -60,7 +66,8 @@ public class TunerConstants {
 
   // Theoretical free speed (m/s) at 12v applied output;
   // This needs to be tuned to your individual robot
-  public static final double kSpeedAt12VoltsMps = 10.3;
+  public static final double kSpeedAt12VoltsMps =
+      frc.robot.Constants.DrivetrainConstants.DRIVE_MAX_SPEED;
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot
@@ -68,7 +75,7 @@ public class TunerConstants {
 
   private static final double kDriveGearRatio = 6.122448979591837;
   private static final double kSteerGearRatio = 21.428571428571427;
-  private static final double kWheelRadiusInches = 3.95;
+  private static final double kWheelRadiusInches = 1.95;
 
   private static final boolean kInvertLeftSide = false;
   private static final boolean kInvertRightSide = true;
@@ -78,7 +85,7 @@ public class TunerConstants {
 
   // These are only used for simulation
   private static final double kSteerInertia = 0.00001;
-  private static final double kDriveInertia = 0.001;
+  private static final double kDriveInertia = 0.005;
   // Simulated voltage necessary to overcome friction
   private static final double kSteerFrictionVoltage = 0.25;
   private static final double kDriveFrictionVoltage = 0.25;

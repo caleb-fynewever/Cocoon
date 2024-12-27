@@ -24,7 +24,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 public class Constants {
 
   public static class DriverConstants {
-    public static final boolean FORCE_GAMEPAD = false;
+    public static final boolean FORCE_GAMEPAD = true;
     public static final double JOYSTICK_DEADBAND = 0.075;
     public static final double GAMEPAD_DEADBAND = 0.0; // add deadband here if there is drift
   }
@@ -40,7 +40,9 @@ public class Constants {
         TunerConstants.DriveTrain.getDrivetrainConstants();
     public static final SwerveModuleConstants[] TUNER_MODULE_CONSTANTS =
         TunerConstants.DriveTrain.getModuleConstants();
-    public static final double MAX_SPEED = TUNER_MODULE_CONSTANTS[0].SpeedAt12Volts;
+
+    public static final double DRIVE_MAX_SPEED = 4.43676260556;
+    public static final double DRIVE_MAX_ANGULAR_RATE = Units.degreesToRadians(360 * 1.15);
 
     public static final double DRIVE_CURRENT_LIMIT_AMPS = 80;
 
@@ -131,7 +133,7 @@ public class Constants {
     public static final ModuleConfig MODULE_CONFIG =
         new ModuleConfig(
             DrivetrainConstants.WHEEL_RADIUS,
-            DrivetrainConstants.MAX_SPEED,
+            DrivetrainConstants.DRIVE_MAX_SPEED,
             1.1,
             DCMotor.getKrakenX60Foc(1),
             DrivetrainConstants.DRIVE_CURRENT_LIMIT_AMPS,
