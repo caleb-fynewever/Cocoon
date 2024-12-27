@@ -21,7 +21,7 @@ public abstract class AutoBase extends SequentialCommandGroup {
   protected AutoBase(Optional<Pose2d> pathStartingPose) {
 
     if (pathStartingPose.isEmpty()) {
-      startingPose = new Pose2d();
+      DriverStation.reportError("EMPTY PATH STARTING POSE***", true);
     } else {
       startingPose = pathStartingPose.get();
     }
