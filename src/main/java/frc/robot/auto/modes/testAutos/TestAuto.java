@@ -5,22 +5,20 @@
 package frc.robot.auto.modes.testAutos;
 
 import com.pathplanner.lib.path.PathPlannerPath;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.auto.common.AutoDescription;
 import frc.robot.auto.modes.AutoBase;
 
-@AutoDescription(description = "Compile/recompile test")
-public class CompileTest extends AutoBase {
+@AutoDescription(description = "Test Auto c12")
+public class TestAuto extends AutoBase {
+  private static final PathPlannerPath pathc1 = getPathFromFile("C-1");
+  private static final PathPlannerPath path12 = getPathFromFile("1-2");
 
-  private static final PathPlannerPath startPathCenterTo1 = getPathFromFile("StP-CS-1");
-
-  public CompileTest() {
-    super(startPathCenterTo1.getStartingHolonomicPose());
+  public TestAuto() {
+    super(pathc1.getStartingHolonomicPose());
   }
 
   @Override
   public void init() {
-    new WaitCommand(3).execute();
-    addCommands(createFollowPathCommand(startPathCenterTo1));
+    addCommands(createFollowPathCommand(pathc1), createFollowPathCommand(path12));
   }
 }

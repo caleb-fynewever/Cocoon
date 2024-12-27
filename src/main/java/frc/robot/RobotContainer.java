@@ -13,7 +13,6 @@ import frc.robot.commands.drive.DefaultDriveCommand;
 import frc.robot.commands.drive.SnapToAngleCommand;
 import frc.robot.controlboard.ControlBoard;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.Telemetry;
 import frc.robot.util.io.Dashboard;
 
@@ -25,7 +24,7 @@ public class RobotContainer {
 
   public final RobotState robotState = RobotState.getInstance();
   public final DrivetrainSubsystem drivetrain = DrivetrainSubsystem.getInstance();
-  public final VisionSubsystem vision = VisionSubsystem.getInstance();
+  // public final VisionSubsystem vision = VisionSubsystem.getInstance();
 
   private final Telemetry logger =
       new Telemetry(DrivetrainSubsystem.getMaxVelocityMetersPerSecond());

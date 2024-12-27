@@ -6,9 +6,7 @@ package frc.robot.auto.common;
 
 import frc.robot.Constants.DashboardConstants;
 import frc.robot.auto.modes.AutoBase;
-import frc.robot.auto.modes.testAutos.CompileTest;
-import frc.robot.auto.modes.testAutos.NewPPAuto12387;
-import frc.robot.auto.modes.testAutos.Sauce123Auto;
+import frc.robot.auto.modes.testAutos.TestAuto;
 import frc.robot.util.io.Dashboard;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
@@ -66,9 +64,7 @@ public class AutoFactory {
 
   public static enum Auto {
     NO_AUTO(null),
-    SAUCE_AUTO(Sauce123Auto.class),
-    PPAUTO12387(NewPPAuto12387.class),
-    COMPILE_TEST(CompileTest.class);
+    TEST_AUTO(TestAuto.class);
 
     private final Class<? extends AutoBase> autoClass;
 
@@ -79,17 +75,9 @@ public class AutoFactory {
     public AutoBase getInstance() {
       if (autoClass != null) {
         try {
-
-          // AutoDescription autoDescription =
-          // autoClass.getClass().getAnnotation(AutoDescription.class);
-          // if (autoClass.isAnnotationPresent(AutoDescription.class)) {
           loggedAutoDescription.set(autoClass.getAnnotation(AutoDescription.class).description());
-          // } else {
-          //     loggedAutoDescription.set("No description");
-          // }
 
           return autoClass.getConstructor().newInstance();
-
         } catch (Exception e) {
           e.printStackTrace();
         }

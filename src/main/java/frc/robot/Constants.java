@@ -46,9 +46,12 @@ public class Constants {
 
     public static final double WHEEL_RADIUS = TUNER_MODULE_CONSTANTS[0].WheelRadius;
     // Left-to-right distance between drivetrain wheels
-    public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(24);
+    public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(23.5);
     // Front-to-back distance between drivetrain wheels
-    public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(19);
+    public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(23.5);
+
+    public static final double DRIVETRAIN_WEIGHT_KG =
+        Units.lbsToKilograms(100); // TODO: weigh the robot
 
     public static final Matrix<N3, N1> ODOMETRY_STDDEV = VecBuilder.fill(0.1, 0.1, 0.1);
 
@@ -117,11 +120,11 @@ public class Constants {
   }
 
   public static final class PathPlannerConstants {
-    public static final double TRANSLATION_KP = 0.7;
+    public static final double TRANSLATION_KP = 5.0;
     public static final double TRANSLATION_KI = 0;
     public static final double TRANSLATION_KD = 0;
 
-    public static final double ROTATION_KP = .7;
+    public static final double ROTATION_KP = 5.0;
     public static final double ROTATION_KI = 0;
     public static final double ROTATION_KD = 0;
 
@@ -136,8 +139,13 @@ public class Constants {
 
     public static final RobotConfig ROBOT_CONFIG =
         new RobotConfig(
-            Units.lbsToKilograms(100),
-            1.0,
+            DrivetrainConstants.DRIVETRAIN_WEIGHT_KG,
+            (1 / 12)
+                * DrivetrainConstants.DRIVETRAIN_WEIGHT_KG
+                * (Math.pow(DrivetrainConstants.DRIVETRAIN_TRACKWIDTH_METERS, 2)
+                    + Math.pow(
+                        DrivetrainConstants.DRIVETRAIN_WHEELBASE_METERS,
+                        2)), // rough estimation (1/12) * mass * (length^2 + width^2)
             MODULE_CONFIG,
             DrivetrainConstants.DRIVETRAIN_TRACKWIDTH_METERS,
             DrivetrainConstants.DRIVETRAIN_WHEELBASE_METERS);
