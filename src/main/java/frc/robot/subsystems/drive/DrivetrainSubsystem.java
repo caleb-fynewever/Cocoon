@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -126,7 +128,8 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
   }
 
   public static double getMaxVelocityMetersPerSecond() {
-    return TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
+    return TunerConstants.kSpeedAt12Volts.in(
+        MetersPerSecond); // kSpeedAt12VoltsMps desired top speed
   }
 
   public static double getMaxAngularVelocityRadiansPerSecond() {

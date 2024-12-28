@@ -6,7 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.auto.common.AutoFactory;
 import frc.robot.commands.drive.AimChassisToGoalCommand;
 import frc.robot.commands.drive.DefaultDriveCommand;
@@ -46,7 +46,11 @@ public class RobotContainer {
   private void configureBindings() {
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    controlBoard.resetGyro().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
+    controlBoard
+        .resetGyro()
+        .onTrue(
+            Commands.runOnce(drivetrain::seedFieldCentric)
+                .alongWith(Commands.print("ZERO HEADING")));
 
     controlBoard
         .aimToGoal()

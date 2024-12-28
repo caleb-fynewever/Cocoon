@@ -27,12 +27,12 @@ public class JoystickPrimaryInput implements IPrimaryControlBoard {
 
   @Override
   public double getThrottle() {
-    return MathHelpers.deadband(translateStick.getRawAxis(1), DriverConstants.JOYSTICK_DEADBAND);
+    return MathHelpers.deadband(-translateStick.getRawAxis(1), DriverConstants.JOYSTICK_DEADBAND);
   }
 
   @Override
   public double getStrafe() {
-    return MathHelpers.deadband(translateStick.getRawAxis(0), DriverConstants.JOYSTICK_DEADBAND);
+    return MathHelpers.deadband(-translateStick.getRawAxis(0), DriverConstants.JOYSTICK_DEADBAND);
   }
 
   @Override
@@ -82,7 +82,7 @@ public class JoystickPrimaryInput implements IPrimaryControlBoard {
 
   @Override
   public Trigger resetGyro() {
-    return new JoystickButton(rotateStick, 11);
+    return new JoystickButton(translateStick, 8);
   }
 
   @Override

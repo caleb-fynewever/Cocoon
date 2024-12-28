@@ -34,7 +34,7 @@ public class GamepadPrimaryInput implements IPrimaryControlBoard {
 
   @Override
   public double getRotation() {
-    return -MathHelpers.deadband(controller.getRawAxis(2), DriverConstants.GAMEPAD_DEADBAND);
+    return -MathHelpers.deadband(controller.getRawAxis(4), DriverConstants.GAMEPAD_DEADBAND);
   }
 
   @Override

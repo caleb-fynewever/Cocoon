@@ -25,8 +25,8 @@ public class Constants {
 
   public static class DriverConstants {
     public static final boolean FORCE_GAMEPAD = true;
-    public static final double JOYSTICK_DEADBAND = 0.075;
-    public static final double GAMEPAD_DEADBAND = 0.0; // add deadband here if there is drift
+    public static final double JOYSTICK_DEADBAND = 0.005;
+    public static final double GAMEPAD_DEADBAND = 0.025; // add deadband here if there is drift
   }
 
   public static class DrivetrainConstants {
@@ -37,16 +37,20 @@ public class Constants {
      * (0-indexed) module, corresponding to the Back Left module.
      */
     public static final SwerveDrivetrainConstants TUNER_DRIVETRAIN_CONSTANTS =
-        TunerConstants.DriveTrain.getDrivetrainConstants();
-    public static final SwerveModuleConstants[] TUNER_MODULE_CONSTANTS =
-        TunerConstants.DriveTrain.getModuleConstants();
+        TunerConstants.DrivetrainConstants;
+    public static final SwerveModuleConstants[] TUNER_MODULE_CONSTANTS = {
+      TunerConstants.FrontLeft,
+      TunerConstants.FrontRight,
+      TunerConstants.BackLeft,
+      TunerConstants.BackRight
+    };
 
     public static final double DRIVE_MAX_SPEED = 4.43676260556;
     public static final double DRIVE_MAX_ANGULAR_RATE = Units.degreesToRadians(360 * 1.15);
 
     public static final double DRIVE_CURRENT_LIMIT_AMPS = 80;
 
-    public static final double WHEEL_RADIUS = TUNER_MODULE_CONSTANTS[0].WheelRadius;
+    public static final double WHEEL_RADIUS = TunerConstants.FrontLeft.WheelRadius;
     // Left-to-right distance between drivetrain wheels
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(23.5);
     // Front-to-back distance between drivetrain wheels

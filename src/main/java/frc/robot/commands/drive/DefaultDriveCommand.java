@@ -71,7 +71,7 @@ public class DefaultDriveCommand extends Command {
               .withRotationalDeadband(
                   DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond()
                       * 0.05) // Add a 5% deadband
-              .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+              .withDriveRequestType(DriveRequestType.Velocity)
               .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
               .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
               .withRotationalRate(
@@ -84,7 +84,7 @@ public class DefaultDriveCommand extends Command {
               .withRotationalDeadband(
                   DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond()
                       * 0.05) // Add a 5% deadband
-              .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+              .withDriveRequestType(DriveRequestType.Velocity)
               .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
               .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
               .withRotationalRate(
