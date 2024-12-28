@@ -1,5 +1,7 @@
 package frc.robot.subsystems.vision;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import frc.robot.Constants.FieldConstants;
@@ -17,12 +19,12 @@ public class VisionPoseAcceptor {
 
     estimatedPose = visionUpdate.estimatedPose;
 
-    if (estimatedPose.getTranslation().getX() < -VisionConstants.FIELD_BORDER_MARGIN
+    if (estimatedPose.getTranslation().getX() < -VisionConstants.FIELD_BORDER_MARGIN.in(Meters)
         || estimatedPose.getTranslation().getX()
-            > FieldConstants.FIELD_LENGTH + VisionConstants.FIELD_BORDER_MARGIN
-        || estimatedPose.getTranslation().getY() < -VisionConstants.FIELD_BORDER_MARGIN
+            > (FieldConstants.FIELD_LENGTH.plus(VisionConstants.FIELD_BORDER_MARGIN)).in(Meters)
+        || estimatedPose.getTranslation().getY() < -VisionConstants.FIELD_BORDER_MARGIN.in(Meters)
         || estimatedPose.getTranslation().getY()
-            > FieldConstants.FIELD_WIDTH + VisionConstants.FIELD_BORDER_MARGIN) {
+            > (FieldConstants.FIELD_WIDTH.plus(VisionConstants.FIELD_BORDER_MARGIN)).in(Meters)) {
       return false;
     }
 

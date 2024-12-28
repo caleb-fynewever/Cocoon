@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -16,7 +18,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.*;
 import frc.robot.subsystems.drive.ctre.generated.TunerConstants;
 import frc.robot.subsystems.vision.TagTracker.TagTrackerConstants;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -24,7 +26,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 public class Constants {
 
   public static class DriverConstants {
-    public static final boolean FORCE_GAMEPAD = true;
+    public static final boolean FORCE_GAMEPAD = false;
     public static final double JOYSTICK_DEADBAND = 0.005;
     public static final double GAMEPAD_DEADBAND = 0.025; // add deadband here if there is drift
   }
@@ -45,25 +47,22 @@ public class Constants {
       TunerConstants.BackRight
     };
 
-    public static final double DRIVE_MAX_SPEED = 4.43676260556;
-    public static final double DRIVE_MAX_ANGULAR_RATE = Units.degreesToRadians(360 * 1.15);
+    public static final LinearVelocity DRIVE_MAX_SPEED = MetersPerSecond.of(4.43676260556);
+    public static final AngularVelocity DRIVE_MAX_ANGULAR_RATE = DegreesPerSecond.of(360 * 1.15);
 
-    public static final double DRIVE_CURRENT_LIMIT_AMPS = 80;
+    public static final Current DRIVE_CURRENT_LIMIT_AMPS = Amps.of(80.0);
 
-    public static final double WHEEL_RADIUS = TunerConstants.FrontLeft.WheelRadius;
+    public static final Distance WHEEL_RADIUS = Meters.of(TunerConstants.FrontLeft.WheelRadius);
     // Left-to-right distance between drivetrain wheels
-    public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(23.5);
+    public static final Distance DRIVETRAIN_TRACKWIDTH = Inches.of(23.5);
     // Front-to-back distance between drivetrain wheels
-    public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(23.5);
+    public static final Distance DRIVETRAIN_WHEELBASE = Inches.of(23.5);
 
-    public static final double DRIVETRAIN_WEIGHT_KG =
-        Units.lbsToKilograms(100); // TODO: weigh the robot
+    public static final Mass DRIVETRAIN_MASS = Pounds.of(100); // TODO: weigh the robot
 
     public static final Matrix<N3, N1> ODOMETRY_STDDEV = VecBuilder.fill(0.1, 0.1, 0.1);
 
-    public static final double COLLISION_THRESHOLD_DELTA_G = 1f;
-
-    public static final double HEADING_TOLERANCE = 3;
+    public static final Angle HEADING_TOLERANCE = Degrees.of(3);
   }
 
   public static class VisionConstants {
@@ -73,7 +72,7 @@ public class Constants {
         VecBuilder.fill(XY_STDDEV, XY_STDDEV, HEADING_STDDEV);
 
     public static final double MAX_POSE_AMBIGUITY = 0.15;
-    public static final double FIELD_BORDER_MARGIN = 0.5;
+    public static final Distance FIELD_BORDER_MARGIN = Meters.of(0.5);
     public static final double MAX_VISION_CORRECTION = 2;
 
     public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT =
@@ -91,21 +90,18 @@ public class Constants {
 
       public static final PoseStrategy STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
-      public static final double X_OFFSET_M = 0.29;
-      public static final double Y_OFFSET_M = 0.26;
-      public static final double Z_OFFSET_M = 0.25;
+      public static final Distance X_OFFSET = Meters.of(0.29);
+      public static final Distance Y_OFFSET = Meters.of(0.26);
+      public static final Distance Z_OFFSET = Meters.of(0.25);
 
-      public static final double THETA_X_OFFSET_DEGREES = 0; // roll
-      public static final double THETA_Y_OFFSET_DEGREES = -45; // pitch
-      public static final double THETA_Z_OFFSET_DEGREES = 0; // yaw
+      public static final Angle THETA_X_OFFSET = Degrees.of(0); // roll
+      public static final Angle THETA_Y_OFFSET = Degrees.of(-45); // pitch
+      public static final Angle THETA_Z_OFFSET = Degrees.of(0); // yaw
 
       public static final Transform3d ROBOT_TO_CAMERA_METERS =
           new Transform3d(
-              new Translation3d(X_OFFSET_M, Y_OFFSET_M, Z_OFFSET_M),
-              new Rotation3d(
-                  Units.degreesToRadians(THETA_X_OFFSET_DEGREES),
-                  Units.degreesToRadians(THETA_Y_OFFSET_DEGREES),
-                  Units.degreesToRadians(THETA_Z_OFFSET_DEGREES)));
+              new Translation3d(X_OFFSET, Y_OFFSET, Z_OFFSET),
+              new Rotation3d(THETA_X_OFFSET, THETA_Y_OFFSET, THETA_Z_OFFSET));
 
       public static TagTrackerConstants TagTrackerConstants() {
         return new TagTrackerConstants(
@@ -115,8 +111,8 @@ public class Constants {
   }
 
   public static class FieldConstants {
-    public static final double FIELD_LENGTH = Units.inchesToMeters(651.223);
-    public static final double FIELD_WIDTH = Units.inchesToMeters(323.277);
+    public static final Distance FIELD_LENGTH = Inches.of(651.223);
+    public static final Distance FIELD_WIDTH = Inches.of(323.277);
   }
 
   public static final class DashboardConstants {
@@ -134,6 +130,14 @@ public class Constants {
     public static final double ROTATION_KI = 0;
     public static final double ROTATION_KD = 0;
 
+    // Rough estimation (1/12) * mass * (length^2 + width^2)
+    public static final MomentOfInertia ROBOT_MOI =
+        KilogramSquareMeters.of(
+            (1 / 12)
+                * DrivetrainConstants.DRIVETRAIN_MASS.in(Kilograms)
+                * (Math.pow(DrivetrainConstants.DRIVETRAIN_TRACKWIDTH.in(Meters), 2)
+                    + Math.pow(DrivetrainConstants.DRIVETRAIN_WHEELBASE.in(Meters), 2)));
+
     public static final ModuleConfig MODULE_CONFIG =
         new ModuleConfig(
             DrivetrainConstants.WHEEL_RADIUS,
@@ -145,16 +149,11 @@ public class Constants {
 
     public static final RobotConfig ROBOT_CONFIG =
         new RobotConfig(
-            DrivetrainConstants.DRIVETRAIN_WEIGHT_KG,
-            (1 / 12)
-                * DrivetrainConstants.DRIVETRAIN_WEIGHT_KG
-                * (Math.pow(DrivetrainConstants.DRIVETRAIN_TRACKWIDTH_METERS, 2)
-                    + Math.pow(
-                        DrivetrainConstants.DRIVETRAIN_WHEELBASE_METERS,
-                        2)), // rough estimation (1/12) * mass * (length^2 + width^2)
+            DrivetrainConstants.DRIVETRAIN_MASS,
+            ROBOT_MOI,
             MODULE_CONFIG,
-            DrivetrainConstants.DRIVETRAIN_TRACKWIDTH_METERS,
-            DrivetrainConstants.DRIVETRAIN_WHEELBASE_METERS);
+            DrivetrainConstants.DRIVETRAIN_TRACKWIDTH,
+            DrivetrainConstants.DRIVETRAIN_WHEELBASE);
 
     public static final PPHolonomicDriveController PATH_FOLLOWING_CONTROLLER =
         new PPHolonomicDriveController(

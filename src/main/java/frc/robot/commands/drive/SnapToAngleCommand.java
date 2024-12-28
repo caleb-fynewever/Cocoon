@@ -4,10 +4,11 @@
 
 package frc.robot.commands.drive;
 
+import static edu.wpi.first.units.Units.Radians;
+
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
 import java.util.function.BooleanSupplier;
@@ -35,8 +36,7 @@ public class SnapToAngleCommand extends DefaultDriveCommand {
 
     drive.HeadingController.setPID(3.5, 0, 0);
     drive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
-    drive.HeadingController.setTolerance(
-        Units.degreesToRadians(DrivetrainConstants.HEADING_TOLERANCE));
+    drive.HeadingController.setTolerance(DrivetrainConstants.HEADING_TOLERANCE.in(Radians));
     Logger.recordOutput("Snap Direction ", desiredDirection.getDegrees());
   }
 

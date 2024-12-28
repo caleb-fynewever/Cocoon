@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import com.ctre.phoenix6.Utils;
@@ -141,8 +142,8 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
 
     return getMaxVelocityMetersPerSecond()
         / Math.hypot(
-            DrivetrainConstants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
-            DrivetrainConstants.DRIVETRAIN_WHEELBASE_METERS / 2.0);
+            DrivetrainConstants.DRIVETRAIN_TRACKWIDTH.in(Meters) / 2.0,
+            DrivetrainConstants.DRIVETRAIN_WHEELBASE.in(Meters) / 2.0);
   }
 
   private void startSimThread() {

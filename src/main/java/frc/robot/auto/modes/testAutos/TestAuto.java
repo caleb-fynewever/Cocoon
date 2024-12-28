@@ -19,6 +19,6 @@ public class TestAuto extends AutoBase {
 
   @Override
   public void init() {
-    addCommands(createFollowPathCommand(pathc1), createFollowPathCommand(path12));
+    addCommands(createFollowPathCommand(pathc1)); // , createFollowPathCommand(path12));
   }
 }

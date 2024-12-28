@@ -25,7 +25,7 @@ public class ControlBoard implements IPrimaryControlBoard, ISecondaryControlBoar
 
   private ControlBoard() {
     boolean useDriveGamepad =
-        DriverConstants.FORCE_GAMEPAD || DriverStation.getJoystickIsXbox(Ports.GAMEPAD_PORT);
+        DriverStation.getJoystickIsXbox(Ports.GAMEPAD_PORT) || DriverConstants.FORCE_GAMEPAD;
     primaryControlBoard =
         useDriveGamepad ? GamepadPrimaryInput.getInstance() : JoystickPrimaryInput.getInstance();
     secondaryControlBoard = ControlPanelInput.getInstance();
