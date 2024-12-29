@@ -4,20 +4,20 @@
 
 package frc.robot.commands.drive;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
+import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.ApplyChassisSpeeds;
-
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
+import frc.robot.subsystems.drive.ctre.generated.TunerConstants;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class DefaultDriveCommand extends Command {
 
-  private final DrivetrainSubsystem drivetrain;
+  private final DrivetrainSubsystem drivetrain = DrivetrainSubsystem.getInstance();
 
   private final DoubleSupplier xSupplier;
   private final DoubleSupplier ySupplier;
@@ -28,22 +28,38 @@ public class DefaultDriveCommand extends Command {
   private final SlewRateLimiter yLimiter;
   private final SlewRateLimiter rotationLimiter;
 
+  protected final double maxSpeed =
+      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+  private final double maxAngularRate =
+      RotationsPerSecond.of(0.75)
+          .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+
+  private final SwerveRequest.FieldCentric fieldCentricDrive =
+      new SwerveRequest.FieldCentric()
+          .withDeadband(maxSpeed * 0.05)
+          .withRotationalDeadband(maxAngularRate * 0.05) // Add a 5% deadband
+          .withDriveRequestType(DriveRequestType.Velocity);
+
+  private final SwerveRequest.RobotCentric robotCentricDrive =
+      new SwerveRequest.RobotCentric()
+          .withDeadband(maxSpeed * 0.05)
+          .withRotationalDeadband(maxAngularRate * 0.05) // Add a 5% deadband
+          .withDriveRequestType(DriveRequestType.Velocity);
+
   /**
-   * @param xSupplier        supplier for forward velocity.
-   * @param ySupplier        supplier for sideways velocity.
+   * @param xSupplier supplier for forward velocity.
+   * @param ySupplier supplier for sideways velocity.
    * @param rotationSupplier supplier for angular velocity.
    */
   public DefaultDriveCommand(
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier rotationSupplier,
-      BooleanSupplier fieldCentricSupplier,
-      DrivetrainSubsystem drivetrain) {
+      BooleanSupplier fieldCentricSupplier) {
     this.xSupplier = xSupplier;
     this.ySupplier = ySupplier;
     this.rotationSupplier = rotationSupplier;
     this.fieldCentricSupplier = fieldCentricSupplier;
-    this.drivetrain = drivetrain;
 
     xLimiter = new SlewRateLimiter(2);
     yLimiter = new SlewRateLimiter(2);
@@ -70,23 +86,15 @@ public class DefaultDriveCommand extends Command {
 
   protected SwerveRequest getSwerveRequest() {
     if (getFieldCentric()) {
-        SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-                .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
-                .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.05) // Add a 5% deadband
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-                .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-                .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-                .withRotationalRate(getRotation() * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond());
-        return drive;
+      return fieldCentricDrive
+          .withVelocityX(getX() * maxSpeed)
+          .withVelocityY(getY() * maxSpeed)
+          .withRotationalRate(getRotation() * maxAngularRate);
     } else {
-        SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
-                .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
-                .withRotationalDeadband(DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond() * 0.05) // Add a 5% deadband
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-                .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-                .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-                .withRotationalRate(getRotation() * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond());
-        return drive;
+      return robotCentricDrive
+          .withVelocityX(getX() * maxSpeed)
+          .withVelocityY(getY() * maxSpeed)
+          .withRotationalRate(getRotation() * maxAngularRate);
     }
   }
 
@@ -97,7 +105,7 @@ public class DefaultDriveCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    drivetrain.setControl(new ApplyChassisSpeeds());
+    drivetrain.stop();
   }
 
   protected double slewAxis(SlewRateLimiter limiter, double value) {
