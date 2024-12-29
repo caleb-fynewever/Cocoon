@@ -4,13 +4,13 @@
 
 package frc.robot.commands.drive;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import frc.robot.RobotState;
-import frc.robot.subsystems.drive.DrivetrainSubsystem;
 import frc.robot.util.AimingCalculator;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -20,7 +20,7 @@ public class AimChassisToGoalCommand extends DefaultDriveCommand {
 
   private SwerveRequest.FieldCentricFacingAngle drive =
       new SwerveRequest.FieldCentricFacingAngle()
-          .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
+          .withDeadband(super.maxSpeed * 0.05)
           .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
 
   /**
@@ -44,15 +44,15 @@ public class AimChassisToGoalCommand extends DefaultDriveCommand {
         AimingCalculator.aimToPoint(
             robotState.getFieldToRobot(),
             robotState.getChassisSpeeds(true),
-            new Translation2d(Units.inchesToMeters(8), Units.inchesToMeters(218.415)))[1]);
+            new Translation2d(Inches.of(8), Inches.of(218.415)))[1]);
   }
 
   @Override
   public SwerveRequest getSwerveRequest() {
     drive
         .withTargetDirection(calculateHeading())
-        .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-        .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond());
+        .withVelocityX(getX() * super.maxSpeed)
+        .withVelocityY(getY() * super.maxSpeed);
 
     return drive;
   }

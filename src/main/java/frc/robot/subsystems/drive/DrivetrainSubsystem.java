@@ -1,8 +1,5 @@
 package frc.robot.subsystems.drive;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -16,9 +13,9 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.PathPlannerConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.Robot;
 import frc.robot.RobotState;
-import frc.robot.subsystems.drive.ctre.generated.TunerConstants;
 import frc.robot.subsystems.vision.VisionUpdate;
 import java.util.Optional;
 
@@ -46,7 +43,11 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
 
   private DrivetrainSubsystem() {
     super(
-        DrivetrainConstants.TUNER_DRIVETRAIN_CONSTANTS, DrivetrainConstants.TUNER_MODULE_CONSTANTS);
+        DrivetrainConstants.TUNER_DRIVETRAIN_CONSTANTS.getDrivetrainConstants(),
+        0,
+        DrivetrainConstants.ODOMETRY_STDDEV,
+        VisionConstants.VISION_STDDEV,
+        DrivetrainConstants.TUNER_DRIVETRAIN_CONSTANTS.getModuleConstants());
     configurePathPlanner();
 
     if (Robot.isSimulation()) {
@@ -126,24 +127,6 @@ public class DrivetrainSubsystem extends SwerveDrivetrain implements Subsystem {
     }
 
     robotState.addDrivetrainState(super.getState());
-  }
-
-  public static double getMaxVelocityMetersPerSecond() {
-    return TunerConstants.kSpeedAt12Volts.in(
-        MetersPerSecond); // kSpeedAt12VoltsMps desired top speed
-  }
-
-  public static double getMaxAngularVelocityRadiansPerSecond() {
-    /*
-     * Find the theoretical maximum angular velocity of the robot in radians per
-     * second
-     * (a measure of how fast the robot can rotate in place).
-     */
-
-    return getMaxVelocityMetersPerSecond()
-        / Math.hypot(
-            DrivetrainConstants.DRIVETRAIN_TRACKWIDTH.in(Meters) / 2.0,
-            DrivetrainConstants.DRIVETRAIN_WHEELBASE.in(Meters) / 2.0);
   }
 
   private void startSimThread() {

@@ -4,11 +4,14 @@
 
 package frc.robot.commands.drive;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
+import frc.robot.subsystems.drive.ctre.generated.TunerConstants;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -24,6 +27,24 @@ public class DefaultDriveCommand extends Command {
   private final SlewRateLimiter xLimiter;
   private final SlewRateLimiter yLimiter;
   private final SlewRateLimiter rotationLimiter;
+
+  protected final double maxSpeed =
+      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+  private final double maxAngularRate =
+      RotationsPerSecond.of(0.75)
+          .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+
+  private final SwerveRequest.FieldCentric fieldCentricDrive =
+      new SwerveRequest.FieldCentric()
+          .withDeadband(maxSpeed * 0.05)
+          .withRotationalDeadband(maxAngularRate * 0.05) // Add a 5% deadband
+          .withDriveRequestType(DriveRequestType.Velocity);
+
+  private final SwerveRequest.RobotCentric robotCentricDrive =
+      new SwerveRequest.RobotCentric()
+          .withDeadband(maxSpeed * 0.05)
+          .withRotationalDeadband(maxAngularRate * 0.05) // Add a 5% deadband
+          .withDriveRequestType(DriveRequestType.Velocity);
 
   /**
    * @param xSupplier supplier for forward velocity.
@@ -65,31 +86,15 @@ public class DefaultDriveCommand extends Command {
 
   protected SwerveRequest getSwerveRequest() {
     if (getFieldCentric()) {
-      SwerveRequest.FieldCentric drive =
-          new SwerveRequest.FieldCentric()
-              .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
-              .withRotationalDeadband(
-                  DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond()
-                      * 0.05) // Add a 5% deadband
-              .withDriveRequestType(DriveRequestType.Velocity)
-              .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-              .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-              .withRotationalRate(
-                  getRotation() * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond());
-      return drive;
+      return fieldCentricDrive
+          .withVelocityX(getX() * maxSpeed)
+          .withVelocityY(getY() * maxSpeed)
+          .withRotationalRate(getRotation() * maxAngularRate);
     } else {
-      SwerveRequest.RobotCentric drive =
-          new SwerveRequest.RobotCentric()
-              .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
-              .withRotationalDeadband(
-                  DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond()
-                      * 0.05) // Add a 5% deadband
-              .withDriveRequestType(DriveRequestType.Velocity)
-              .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-              .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-              .withRotationalRate(
-                  getRotation() * DrivetrainSubsystem.getMaxAngularVelocityRadiansPerSecond());
-      return drive;
+      return robotCentricDrive
+          .withVelocityX(getX() * maxSpeed)
+          .withVelocityY(getY() * maxSpeed)
+          .withRotationalRate(getRotation() * maxAngularRate);
     }
   }
 

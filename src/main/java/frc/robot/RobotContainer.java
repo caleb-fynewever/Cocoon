@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.auto.common.AutoFactory;
 import frc.robot.commands.drive.AimChassisToGoalCommand;
 import frc.robot.commands.drive.DefaultDriveCommand;
@@ -27,7 +30,7 @@ public class RobotContainer {
   // public final VisionSubsystem vision = VisionSubsystem.getInstance();
 
   private final Telemetry logger =
-      new Telemetry(DrivetrainSubsystem.getMaxVelocityMetersPerSecond());
+      new Telemetry(DrivetrainConstants.DRIVE_MAX_SPEED.in(MetersPerSecond));
 
   public RobotContainer() {
 

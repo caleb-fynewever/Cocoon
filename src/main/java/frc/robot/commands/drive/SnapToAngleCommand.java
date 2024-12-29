@@ -10,13 +10,15 @@ import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.subsystems.drive.DrivetrainSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class SnapToAngleCommand extends DefaultDriveCommand {
-  private SwerveRequest.FieldCentricFacingAngle drive;
+  private SwerveRequest.FieldCentricFacingAngle drive =
+      new SwerveRequest.FieldCentricFacingAngle()
+          .withDeadband(super.maxSpeed * 0.05)
+          .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
 
   private Rotation2d desiredDirection;
 
@@ -29,11 +31,6 @@ public class SnapToAngleCommand extends DefaultDriveCommand {
     super(xSupplier, ySupplier, rotationSupplier, fieldCentricSupplier);
     this.desiredDirection = desiredDirection;
 
-    drive =
-        new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(DrivetrainSubsystem.getMaxVelocityMetersPerSecond() * 0.05)
-            .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
-
     drive.HeadingController.setPID(3.5, 0, 0);
     drive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
     drive.HeadingController.setTolerance(DrivetrainConstants.HEADING_TOLERANCE.in(Radians));
@@ -44,8 +41,8 @@ public class SnapToAngleCommand extends DefaultDriveCommand {
   public SwerveRequest getSwerveRequest() {
     drive
         .withTargetDirection(desiredDirection)
-        .withVelocityX(getX() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond())
-        .withVelocityY(getY() * DrivetrainSubsystem.getMaxVelocityMetersPerSecond());
+        .withVelocityX(getX() * super.maxSpeed)
+        .withVelocityY(getY() * super.maxSpeed);
 
     return drive;
   }

@@ -2,8 +2,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -19,6 +17,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.*;
+import frc.robot.subsystems.drive.ctre.CommandSwerveDrivetrain;
 import frc.robot.subsystems.drive.ctre.generated.TunerConstants;
 import frc.robot.subsystems.vision.TagTracker.TagTrackerConstants;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -32,27 +31,23 @@ public class Constants {
   }
 
   public static class DrivetrainConstants {
+    public static final CommandSwerveDrivetrain TUNER_DRIVETRAIN_CONSTANTS =
+        TunerConstants.createDrivetrain();
     /*
      * If using the generator, the order in which modules are constructed is
      * Front Left, Front Right, Back Left, Back Right. This means if you need
      * the Back Left module, call {@code getModule(2);} to get the 3rd index
      * (0-indexed) module, corresponding to the Back Left module.
      */
-    public static final SwerveDrivetrainConstants TUNER_DRIVETRAIN_CONSTANTS =
-        TunerConstants.DrivetrainConstants;
-    public static final SwerveModuleConstants[] TUNER_MODULE_CONSTANTS = {
-      TunerConstants.FrontLeft,
-      TunerConstants.FrontRight,
-      TunerConstants.BackLeft,
-      TunerConstants.BackRight
-    };
 
-    public static final LinearVelocity DRIVE_MAX_SPEED = MetersPerSecond.of(4.43676260556);
-    public static final AngularVelocity DRIVE_MAX_ANGULAR_RATE = DegreesPerSecond.of(360 * 1.15);
+    public static final LinearVelocity DRIVE_MAX_SPEED = TunerConstants.kSpeedAt12Volts;
+    public static final AngularVelocity DRIVE_MAX_ANGULAR_RATE =
+        RadiansPerSecond.of(DRIVE_MAX_SPEED.in(MetersPerSecond) / 0.42);
 
     public static final Current DRIVE_CURRENT_LIMIT_AMPS = Amps.of(80.0);
 
-    public static final Distance WHEEL_RADIUS = Meters.of(TunerConstants.FrontLeft.WheelRadius);
+    public static final Distance WHEEL_RADIUS =
+        Meters.of(TUNER_DRIVETRAIN_CONSTANTS.getModuleConstants()[0].WheelRadius);
     // Left-to-right distance between drivetrain wheels
     public static final Distance DRIVETRAIN_TRACKWIDTH = Inches.of(23.5);
     // Front-to-back distance between drivetrain wheels
